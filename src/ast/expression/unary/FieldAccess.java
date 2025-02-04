@@ -1,7 +1,6 @@
 package ast.expression.unary;
 
 import ast.expression.Expression;
-import ast.node.AbstractLocatable;
 
 public class FieldAccess extends UnaryExpression {
 
