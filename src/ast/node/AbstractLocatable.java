@@ -11,12 +11,12 @@ public abstract class AbstractLocatable implements Locatable{
     }
 
     @Override
-    public int getLine() {
+    public final int getLine() {
         return this.line;
     }
 
     @Override
-    public int getCol() {
+    public final int getCol() {
         return this.col;
     }
 }

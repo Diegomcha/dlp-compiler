@@ -1,5 +1,6 @@
-package ast.expression;
+package ast.expression.literal;
 
+import ast.expression.Expression;
 import ast.node.AbstractLocatable;
 
 public class IntLiteral extends AbstractLocatable implements Expression {
