@@ -27,3 +27,11 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### Parser Implementation ###
+/src/parser/Cmm.interp
+/src/parser/Cmm.tokens
+/src/parser/CmmLexer.java
+/src/parser/CmmLexer.interp
+/src/parser/CmmLexer.tokens
+/src/parser/CmmParser.java
