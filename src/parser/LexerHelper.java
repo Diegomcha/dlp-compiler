@@ -17,7 +17,7 @@ public class LexerHelper {
             char next = str.charAt(2);
 
             // Regular character
-            if (converted != '\\' || next != '\'')
+            if (converted != '\\' || next == '\'')
                 return converted;
 
             // Special characters
@@ -26,14 +26,14 @@ public class LexerHelper {
             if (str.equals("'\\n'"))
                 return '\n';
 
-            // Unicode character
-            String unicode = str.substring(2, str.length() - 1);
-            return (char) Integer.parseInt(unicode, 16);
+            // ASCII character
+            String ascii = str.substring(2, str.length() - 1);
+            return (char) Integer.parseInt(ascii);
         } catch (IndexOutOfBoundsException e) {
             System.out.println(e);
         }
 
-        return 'i';
+        return '\0';
     }
 
     public static double lexemeToReal(String str) {
