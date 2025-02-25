@@ -3,7 +3,6 @@ package ast.type.struct;
 import ast.node.ASTNode;
 import ast.type.Type;
 
-// TODO: Should it implement ASTNode?
 public class StructField implements ASTNode {
 
     private final String name;

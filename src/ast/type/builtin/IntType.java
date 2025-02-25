@@ -2,5 +2,5 @@ package ast.type.builtin;
 
 import ast.type.Type;
 
-public class Void implements Type {
+public class IntType implements Type {
 }
