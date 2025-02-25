@@ -7,7 +7,6 @@ grammar Cmm;
     import ast.expression.binary.*;
     import ast.expression.literal.*;
     import ast.expression.unary.*;
-    import ast.node.*;
     import ast.statement.*;
     import ast.statement.conditional.*;
     import ast.statement.unary.*;
@@ -18,37 +17,49 @@ grammar Cmm;
 
 // program
 
-program: definition* main_fn EOF
+program returns [Program ast]
+        locals [List<Definition> sts = new ArrayList<>()]:
+         (d=definitions { $sts.addAll($d.ast); })*
+         m=main_fn      { $sts.add($m.ast); }
+         EOF            { $ast = new Program($sts); }
        ;
 
-main_fn: 'void' 'main' '(' ')' '{' fn_body '}'
+main_fn returns [FunctionDefinition ast]:
+         'void' n='main' '(' ')' '{' b=fn_body '}'
+         { $ast = new FunctionDefinition($n.getLine(), $n.getCharPositionInLine() + 1, $n.text, new FunctionType(), $b.defs, $b.stmts); }
        ;
 
 // definitions
 
-definition: var_def
-          | fn_definition
-          ;
+definitions returns [List<Definition> ast = new ArrayList<>()]:
+             v=var_defs         { $ast.addAll($v.ast); }
+           | f=fn_definition    { $ast.add($f.ast); }
+           ;
 
-var_def returns [List<VariableDefinition> ast = new ArrayList<>()]:
-         t=type i1=ID           { $ast.add(new VariableDefinition($i1.getLine(), $i1.getCharPositionInLine() + 1, $i1.text, $t.ast));}
-         (',' in=ID { $ast.add(new VariableDefinition($in.getLine(), $in.getCharPositionInLine() + 1, $in.text, $t.ast)); })* ';'
-       ;
+var_defs returns [List<VariableDefinition> ast = new ArrayList<>()]:
+          t=type i1=ID           { $ast.add(new VariableDefinition($i1.getLine(), $i1.getCharPositionInLine() + 1, $i1.text, $t.ast));}
+          (',' in=ID { $ast.add(new VariableDefinition($in.getLine(), $in.getCharPositionInLine() + 1, $in.text, $t.ast)); })* ';'
+        ;
 
-fn_definition returns [FunctionDefinition ast]:  // TODO: TYPE HERE IS FUNCTION TYPE!!!!
-               t=fn_type n=ID '(' a=fn_args ')' '{' b=fn_body '}'   { $ast = new FunctionDefinition($n.getLine(), $n.getCharPositionInLine() + 1, $n.text, , ); }
+fn_definition returns [FunctionDefinition ast]:
+               rt=fn_return_type n=ID '(' a=fn_args ')' '{' b=fn_body '}'
+               { $ast = new FunctionDefinition($n.getLine(), $n.getCharPositionInLine() + 1, $n.text, new FunctionType($a.ast, $rt.ast), $b.defs, $b.stmts); }
              ;
 
-fn_type returns [Type ast]:
-         bt=builtin_type    { $ast = $bt.ast; }
-       | 'void'             { $ast = new VoidType(); }
-       ;
+fn_return_type returns [Type ast]:
+                bt=builtin_type    { $ast = $bt.ast; }
+              | 'void'             { $ast = new VoidType(); }
+              ;
 
-fn_args: builtin_type ID (',' builtin_type ID)*
+fn_args returns [List<VariableDefinition> ast = new ArrayList<>()]:
+         t1=builtin_type i1=ID          { $ast.add(new VariableDefinition($i1.getLine(), $i1.getCharPositionInLine() + 1, $i1.text, $t1.ast)); }
+         (',' tn=builtin_type in=ID { $ast.add(new VariableDefinition($in.getLine(), $in.getCharPositionInLine() + 1, $in.text, $tn.ast)); })*
        | // epsilon
        ;
 
-fn_body: var_def* statement*
+fn_body returns [List<VariableDefinition> defs = new ArrayList<>(), List<Statement> stmts = new ArrayList<>()]:
+         (v=var_defs { $defs.addAll($v.ast); })*
+         (s=statements { $stmts.addAll($s.ast); })*
        ;
 
 // types
@@ -56,8 +67,8 @@ fn_body: var_def* statement*
 
 type returns [Type ast]:
       bt=builtin_type                   { $ast = $bt.ast; }
-    | t=type '[' ic=INT_CONSTANT ']'    { $ast = new Array($t.ast, LexerHelper.lexemeToInt($ic.text)); }
-    | 'struct' '{' sf=struct_fields '}' { $ast = new Struct($sf.ast); }
+    | t=type '[' ic=INT_CONSTANT ']'    { $ast = new ArrayType($t.ast, LexerHelper.lexemeToInt($ic.text)); }
+    | 'struct' '{' sf=struct_fields '}' { $ast = new StructType($sf.ast); }
     ;
 
 builtin_type returns [Type ast]:
@@ -67,26 +78,25 @@ builtin_type returns [Type ast]:
             ;
 
 struct_fields returns [List<StructField> ast = new ArrayList<>()]:
-// TODO: complete with var_definition
-               (v=var_def {  } )*
+               (v=var_defs { $ast.addAll($v.ast.stream().map(d -> new StructField(d.getName(), d.getType())).toList()); } )*
              ;
 
 // statements
 
-statement returns [List<Statement> ast = new ArrayList<>()]:
-           e1=expression '=' e2=expression ';'                  { $ast.add(new Assignment($e1.ast.getLine(), $e1.ast.getCol(), $e1.ast, $e2.ast)); }
-         | 'read' es=exprs ';'                                  { $ast.addAll($es.ast.stream().map(e -> new Read(e.getLine(), e.getCol(), e)).toList()); }
-         | 'write' es=exprs ';'                                 { $ast.addAll($es.ast.stream().map(e -> new Write(e.getLine(), e.getCol(), e)).toList()); }
-         | r='return' e=expression ';'                          { $ast.add(new Return($r.getLine(), $r.getCharPositionInLine() + 1, $e.ast)); }
-         | f=fn_invocation ';'                                  { $ast.add($f.ast); }
-         | w='while' '(' e=expression ')' b=block               { $ast.add(new While($w.getLine(), $w.getCharPositionInLine() + 1, $e.ast, $b.ast)); }
-         | i='if' '(' e=expression ')' b=block eb=else_block    { $ast.add(new Conditional($i.getLine(), $i.getCharPositionInLine() + 1, $e.ast, $b.ast, $eb.ast)); }
-         ;
+statements returns [List<Statement> ast = new ArrayList<>()]:
+            e1=expression '=' e2=expression ';'                 { $ast.add(new Assignment($e1.ast.getLine(), $e1.ast.getCol(), $e1.ast, $e2.ast)); }
+          | 'read' es=exprs ';'                                 { $ast.addAll($es.ast.stream().map(e -> new Read(e.getLine(), e.getCol(), e)).toList()); }
+          | 'write' es=exprs ';'                                { $ast.addAll($es.ast.stream().map(e -> new Write(e.getLine(), e.getCol(), e)).toList()); }
+          | r='return' e=expression ';'                         { $ast.add(new Return($r.getLine(), $r.getCharPositionInLine() + 1, $e.ast)); }
+          | f=fn_invocation ';'                                 { $ast.add($f.ast); }
+          | w='while' '(' e=expression ')' b=block              { $ast.add(new While($w.getLine(), $w.getCharPositionInLine() + 1, $e.ast, $b.ast)); }
+          | i='if' '(' e=expression ')' b=block eb=else_block   { $ast.add(new Conditional($i.getLine(), $i.getCharPositionInLine() + 1, $e.ast, $b.ast, $eb.ast)); }
+          ;
 
 block returns [List<Statement> ast = new ArrayList<>()]:
-       s=statement            { $ast.addAll($s.ast); }
+       s=statements            { $ast.addAll($s.ast); }
      | '{'
-            (s=statement { $ast.addAll($s.ast); })*
+            (s=statements { $ast.addAll($s.ast); })*
        '}'
      ;
 

@@ -1,11 +1,11 @@
 package ast.type;
 
-public class Array implements Type {
+public class ArrayType implements Type {
 
     private final Type type;
     private final int size;
 
-    public Array(Type type, int size) {
+    public ArrayType(Type type, int size) {
         this.type = type;
         this.size = size;
     }

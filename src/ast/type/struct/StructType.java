@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Struct implements Type {
+public class StructType implements Type {
 
     private final List<StructField> fields;
 
-    public Struct(List<StructField> fields) {
+    public StructType(List<StructField> fields) {
         // TODO: Check fields is not empty
         this.fields = new ArrayList<>(fields);
     }
