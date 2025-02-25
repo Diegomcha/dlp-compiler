@@ -19,4 +19,12 @@ public class Conditional extends AbstractConditional {
     public List<Statement> getElseBody() {
         return Collections.unmodifiableList(elseBody);
     }
+
+    @Override
+    public String toString() {
+        return "Conditional{" +
+                super.toString() +
+                ", elseBody=" + elseBody.size() +
+                '}';
+    }
 }

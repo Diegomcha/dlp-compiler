@@ -20,4 +20,13 @@ public class Indexing extends AbstractLocatable implements Expression {
     public Expression getIndex() {
         return index;
     }
+
+    @Override
+    public String toString() {
+        return "Indexing{" +
+                super.toString() +
+                ", element=" + element +
+                ", index=" + index +
+                '}';
+    }
 }

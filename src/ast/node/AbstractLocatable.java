@@ -19,4 +19,10 @@ public abstract class AbstractLocatable implements Locatable {
     public final int getCol() {
         return this.col;
     }
+
+    @Override
+    public String toString() {
+        return "line=" + line +
+                ", col=" + col;
+    }
 }

@@ -8,4 +8,8 @@ public class UnaryMinus extends UnaryExpression {
         super(line, col, expr);
     }
 
+    @Override
+    public String toString() {
+        return "UnaryMinus{" + super.toString() + "}";
+    }
 }

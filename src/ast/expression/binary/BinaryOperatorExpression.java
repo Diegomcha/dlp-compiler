@@ -27,4 +27,12 @@ public abstract class BinaryOperatorExpression extends AbstractLocatable impleme
     public final Expression getOp2() {
         return op2;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+                ", operator='" + operator + '\'' +
+                ", op1=" + op1 +
+                ", op2=" + op2;
+    }
 }

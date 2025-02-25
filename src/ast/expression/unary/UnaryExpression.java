@@ -15,4 +15,10 @@ public abstract class UnaryExpression extends AbstractLocatable implements Expre
     public final Expression getExpr() {
         return expr;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+                ", expr=" + expr;
+    }
 }

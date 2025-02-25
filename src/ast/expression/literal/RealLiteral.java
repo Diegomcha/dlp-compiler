@@ -15,4 +15,12 @@ public class RealLiteral extends AbstractLocatable implements Expression {
     public double getValue() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return "RealLiteral{" +
+                super.toString() +
+                ", value=" + value +
+                '}';
+    }
 }

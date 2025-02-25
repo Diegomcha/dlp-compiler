@@ -20,4 +20,12 @@ public class StructField implements ASTNode {
     public Type getType() {
         return type;
     }
+
+    @Override
+    public String toString() {
+        return "StructField{" +
+                "name='" + name + '\'' +
+                ", type=" + type +
+                '}';
+    }
 }

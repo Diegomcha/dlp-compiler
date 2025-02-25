@@ -15,4 +15,12 @@ public class IntLiteral extends AbstractLocatable implements Expression {
     public int getValue() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return "IntLiteral{" +
+                super.toString() +
+                ", value=" + value +
+                '}';
+    }
 }

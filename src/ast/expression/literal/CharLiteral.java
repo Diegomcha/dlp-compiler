@@ -15,4 +15,12 @@ public class CharLiteral extends AbstractLocatable implements Expression {
     public char getValue() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return "CharLiteral{" +
+                super.toString() +
+                ", value=" + value +
+                '}';
+    }
 }

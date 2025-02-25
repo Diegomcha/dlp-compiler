@@ -9,4 +9,9 @@ public class While extends AbstractConditional {
     public While(int line, int col, Expression condition, List<Statement> body) {
         super(line, col, condition, body);
     }
+
+    @Override
+    public String toString() {
+        return "While{" + super.toString() + "}";
+    }
 }

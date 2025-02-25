@@ -25,4 +25,12 @@ public class FunctionDefinition extends AbstractDefinition {
         return stmts;
     }
 
+    @Override
+    public String toString() {
+        return "FunctionDefinition{" +
+                super.toString() +
+                ", defs=" + defs.size() +
+                ", stmts=" + stmts.size() +
+                '}';
+    }
 }

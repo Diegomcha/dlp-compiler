@@ -126,7 +126,7 @@ expression returns [Expression ast]:
           | n='!' e=expression                                              { $ast = new Negation($n.getLine(), $n.getCharPositionInLine() + 1, $e.ast); }
           | e1=expression op=('*'|'/'|'%') e2=expression                    { $ast = new ArithmeticExpression($e1.ast.getLine(), $e1.ast.getCol(), $op.text, $e1.ast, $e2.ast); }
           | e1=expression op=('+'|'-') e2=expression                        { $ast = new ArithmeticExpression($e1.ast.getLine(), $e1.ast.getCol(), $op.text, $e1.ast, $e2.ast); }
-          | e1=expression op=('>'|'>='|'<'|'<='|'!='|'==') e2=expression    { $ast = new ComparationExpression($e1.ast.getLine(), $e1.ast.getCol(), $op.text, $e1.ast, $e2.ast); }
+          | e1=expression op=('>'|'>='|'<'|'<='|'!='|'==') e2=expression    { $ast = new ComparisonExpression($e1.ast.getLine(), $e1.ast.getCol(), $op.text, $e1.ast, $e2.ast); }
           | e1=expression op=('&&'|'||') e2=expression                      { $ast = new LogicalExpression($e1.ast.getLine(), $e1.ast.getCol(), $op.text, $e1.ast, $e2.ast); }
           ;
 

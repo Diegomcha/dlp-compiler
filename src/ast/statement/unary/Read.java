@@ -6,4 +6,9 @@ public class Read extends UnaryStatement {
     public Read(int line, int col, Expression expr) {
         super(line, col, expr);
     }
+
+    @Override
+    public String toString() {
+        return "Read{" + super.toString() + "}";
+    }
 }

@@ -14,4 +14,12 @@ public class Variable extends AbstractLocatable implements Expression {
     public String getName() {
         return name;
     }
+
+    @Override
+    public String toString() {
+        return "Variable{" +
+                super.toString() +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

@@ -17,4 +17,12 @@ public class ArrayType implements Type {
     public int getSize() {
         return size;
     }
+
+    @Override
+    public String toString() {
+        return "ArrayType{" +
+                "type=" + type +
+                ", size=" + size +
+                '}';
+    }
 }

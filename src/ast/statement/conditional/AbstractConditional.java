@@ -26,4 +26,11 @@ public abstract class AbstractConditional extends AbstractLocatable implements S
     public final List<Statement> getBody() {
         return Collections.unmodifiableList(body);
     }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+                ", condition=" + condition +
+                ", body=" + body.size();
+    }
 }

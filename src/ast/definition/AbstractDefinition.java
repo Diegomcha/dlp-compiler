@@ -23,4 +23,11 @@ public abstract class AbstractDefinition extends AbstractLocatable implements De
     public final Type getType() {
         return type;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+                ", name='" + name + '\'' +
+                ", type=" + type;
+    }
 }

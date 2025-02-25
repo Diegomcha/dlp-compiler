@@ -27,4 +27,12 @@ public class FuncInvocation extends AbstractLocatable implements Expression, Sta
     public List<Expression> getArgs() {
         return Collections.unmodifiableList(args);
     }
+
+    @Override
+    public String toString() {
+        return "FuncInvocation{" +
+                "fn=" + fn +
+                ", args=" + args.size() +
+                '}';
+    }
 }

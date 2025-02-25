@@ -15,4 +15,12 @@ public class Cast extends UnaryExpression {
     public Type getType() {
         return type;
     }
+
+    @Override
+    public String toString() {
+        return "Cast{" +
+                super.toString() +
+                ", type=" + type +
+                '}';
+    }
 }

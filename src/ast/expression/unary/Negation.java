@@ -8,4 +8,8 @@ public class Negation extends UnaryExpression {
         super(line, col, expr);
     }
 
+    @Override
+    public String toString() {
+        return "Negation{" + super.toString() + "}";
+    }
 }

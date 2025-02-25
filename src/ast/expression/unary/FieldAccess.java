@@ -14,4 +14,12 @@ public class FieldAccess extends UnaryExpression {
     public String getProperty() {
         return property;
     }
+
+    @Override
+    public String toString() {
+        return "FieldAccess{" +
+                super.toString() +
+                ", property='" + property + '\'' +
+                '}';
+    }
 }
