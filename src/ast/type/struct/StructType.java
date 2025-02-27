@@ -10,7 +10,7 @@ public class StructType implements Type {
     private final List<StructField> fields;
 
     public StructType(List<StructField> fields) {
-        assert(!fields.isEmpty());
+        assert (!fields.isEmpty());
         this.fields = new ArrayList<>(fields);
     }
 
