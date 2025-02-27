@@ -1,24 +1,17 @@
 package ast.type.struct;
 
-import ast.node.ASTNode;
+import ast.node.AbstractLocatable;
 import ast.type.Type;
 
-public class StructField implements ASTNode {
+public class StructField extends AbstractLocatable {
 
     private final String name;
     private final Type type;
 
-    public StructField(String name, Type type) {
+    public StructField(int line, int col, String name, Type type) {
+        super(line, col);
         this.name = name;
         this.type = type;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Type getType() {
-        return type;
     }
 
     @Override

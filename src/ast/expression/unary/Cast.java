@@ -12,10 +12,6 @@ public class Cast extends UnaryExpression {
         this.type = type;
     }
 
-    public Type getType() {
-        return type;
-    }
-
     @Override
     public String toString() {
         return "Cast{" +

@@ -14,14 +14,6 @@ public class Assignment extends AbstractLocatable implements Statement {
         this.value = value;
     }
 
-    public Expression getAssigned() {
-        return assigned;
-    }
-
-    public Expression getValue() {
-        return value;
-    }
-
     @Override
     public String toString() {
         return "Assignment{" +

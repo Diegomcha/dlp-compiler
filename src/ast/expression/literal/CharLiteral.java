@@ -12,10 +12,6 @@ public class CharLiteral extends AbstractLocatable implements Expression {
         this.value = value;
     }
 
-    public char getValue() {
-        return value;
-    }
-
     @Override
     public String toString() {
         return "CharLiteral{" +

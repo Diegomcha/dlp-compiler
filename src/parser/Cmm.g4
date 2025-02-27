@@ -37,7 +37,7 @@ definitions returns [List<Definition> ast = new ArrayList<>()]:
            ;
 
 var_defs returns [List<VariableDefinition> ast = new ArrayList<>()]:
-          t=type i1=ID           { $ast.add(new VariableDefinition($i1.getLine(), $i1.getCharPositionInLine() + 1, $i1.text, $t.ast));}
+          t=type i1=ID           { $ast.add(new VariableDefinition($i1.getLine(), $i1.getCharPositionInLine() + 1, $i1.text, $t.ast)); }
           (',' in=ID { $ast.add(new VariableDefinition($in.getLine(), $in.getCharPositionInLine() + 1, $in.text, $t.ast)); })* ';'
         ;
 
@@ -67,7 +67,7 @@ fn_body returns [List<VariableDefinition> defs = new ArrayList<>(), List<Stateme
 
 type returns [Type ast]:
       bt=builtin_type                   { $ast = $bt.ast; }
-    | t=type '[' ic=INT_CONSTANT ']'    { $ast = new ArrayType($t.ast, LexerHelper.lexemeToInt($ic.text)); }
+    | t=type '[' ic=INT_CONSTANT ']'    { $ast = ArrayType.create($t.ast, LexerHelper.lexemeToInt($ic.text)); }
     | 'struct' '{' sf=struct_fields '}' { $ast = new StructType($sf.ast); }
     ;
 
@@ -78,7 +78,7 @@ builtin_type returns [Type ast]:
             ;
 
 struct_fields returns [List<StructField> ast = new ArrayList<>()]:
-               (v=var_defs { $ast.addAll($v.ast.stream().map(d -> new StructField(d.getName(), d.getType())).toList()); } )*
+               (v=var_defs { $ast.addAll($v.ast.stream().map(d -> new StructField(d.getLine(), d.getCol(), d.getName(), d.getType())).toList()); } )*
              ;
 
 // statements
@@ -124,8 +124,8 @@ expression returns [Expression ast]:
           | p='(' t=builtin_type ')' e=expression                           { $ast = new Cast($p.getLine(), $p.getCharPositionInLine() + 1, $e.ast, $t.ast); }
           | m='-' e=expression                                              { $ast = new UnaryMinus($m.getLine(), $m.getCharPositionInLine() + 1, $e.ast); }
           | n='!' e=expression                                              { $ast = new Negation($n.getLine(), $n.getCharPositionInLine() + 1, $e.ast); }
-          | e1=expression op=('*'|'/'|'%') e2=expression                    { $ast = new ArithmeticExpression($e1.ast.getLine(), $e1.ast.getCol(), $op.text, $e1.ast, $e2.ast); }
-          | e1=expression op=('+'|'-') e2=expression                        { $ast = new ArithmeticExpression($e1.ast.getLine(), $e1.ast.getCol(), $op.text, $e1.ast, $e2.ast); }
+          | e1=expression op=('*'|'/'|'%') e2=expression                    { $ast = ArithmeticFactory.create($e1.ast.getLine(), $e1.ast.getCol(), $op.text, $e1.ast, $e2.ast); }
+          | e1=expression op=('+'|'-') e2=expression                        { $ast = ArithmeticFactory.create($e1.ast.getLine(), $e1.ast.getCol(), $op.text, $e1.ast, $e2.ast); }
           | e1=expression op=('>'|'>='|'<'|'<='|'!='|'==') e2=expression    { $ast = new ComparisonExpression($e1.ast.getLine(), $e1.ast.getCol(), $op.text, $e1.ast, $e2.ast); }
           | e1=expression op=('&&'|'||') e2=expression                      { $ast = new LogicalExpression($e1.ast.getLine(), $e1.ast.getCol(), $op.text, $e1.ast, $e2.ast); }
           ;

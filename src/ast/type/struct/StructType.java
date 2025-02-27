@@ -3,7 +3,6 @@ package ast.type.struct;
 import ast.type.Type;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class StructType implements Type {
@@ -13,10 +12,6 @@ public class StructType implements Type {
     public StructType(List<StructField> fields) {
         assert(!fields.isEmpty());
         this.fields = new ArrayList<>(fields);
-    }
-
-    public List<StructField> getFields() {
-        return Collections.unmodifiableList(fields);
     }
 
     @Override

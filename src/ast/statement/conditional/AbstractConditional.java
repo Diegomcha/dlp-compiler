@@ -5,7 +5,6 @@ import ast.node.AbstractLocatable;
 import ast.statement.Statement;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractConditional extends AbstractLocatable implements Statement {
@@ -17,14 +16,6 @@ public abstract class AbstractConditional extends AbstractLocatable implements S
         super(line, col);
         this.condition = condition;
         this.body = new ArrayList<>(body);
-    }
-
-    public final Expression getCondition() {
-        return condition;
-    }
-
-    public final List<Statement> getBody() {
-        return Collections.unmodifiableList(body);
     }
 
     @Override

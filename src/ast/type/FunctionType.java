@@ -4,7 +4,6 @@ import ast.definition.VariableDefinition;
 import ast.type.builtin.VoidType;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class FunctionType implements Type {
@@ -22,14 +21,6 @@ public class FunctionType implements Type {
     public FunctionType(List<VariableDefinition> params, Type returnType) {
         this.params = new ArrayList<>(params);
         this.returnType = returnType;
-    }
-
-    public List<VariableDefinition> getParams() {
-        return Collections.unmodifiableList(params);
-    }
-
-    public Type getReturnType() {
-        return returnType;
     }
 
     @Override

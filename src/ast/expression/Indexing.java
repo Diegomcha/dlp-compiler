@@ -13,14 +13,6 @@ public class Indexing extends AbstractLocatable implements Expression {
         this.index = index;
     }
 
-    public Expression getElement() {
-        return element;
-    }
-
-    public Expression getIndex() {
-        return index;
-    }
-
     @Override
     public String toString() {
         return "Indexing{" +

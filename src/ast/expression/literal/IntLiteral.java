@@ -12,10 +12,6 @@ public class IntLiteral extends AbstractLocatable implements Expression {
         this.value = value;
     }
 
-    public int getValue() {
-        return value;
-    }
-
     @Override
     public String toString() {
         return "IntLiteral{" +

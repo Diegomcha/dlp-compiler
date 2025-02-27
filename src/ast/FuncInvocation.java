@@ -6,7 +6,6 @@ import ast.node.AbstractLocatable;
 import ast.statement.Statement;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class FuncInvocation extends AbstractLocatable implements Expression, Statement {
@@ -18,14 +17,6 @@ public class FuncInvocation extends AbstractLocatable implements Expression, Sta
         super(line, col);
         this.fn = fn;
         this.args = new ArrayList<>(args);
-    }
-
-    public Variable getFn() {
-        return fn;
-    }
-
-    public List<Expression> getArgs() {
-        return Collections.unmodifiableList(args);
     }
 
     @Override

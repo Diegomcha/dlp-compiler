@@ -2,20 +2,19 @@ package ast.type;
 
 public class ArrayType implements Type {
 
-    private final Type type;
+    private Type type;
     private final int size;
 
-    public ArrayType(Type type, int size) {
+    public static ArrayType create(Type type, int size) {
+        if (type instanceof ArrayType arrayType) {
+            arrayType.type = new ArrayType(arrayType.type, size);
+            return arrayType;
+        } else return new ArrayType(type, size);
+    }
+
+    private ArrayType(Type type, int size) {
         this.type = type;
         this.size = size;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public int getSize() {
-        return size;
     }
 
     @Override
