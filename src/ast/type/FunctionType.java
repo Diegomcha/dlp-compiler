@@ -15,7 +15,7 @@ public class FunctionType implements Type {
      * Useful for main fn type definition.
      */
     public FunctionType() {
-        this(new ArrayList<>(), new VoidType());
+        this(new ArrayList<>(), VoidType.getInstance());
     }
 
     public FunctionType(List<VariableDefinition> params, Type returnType) {

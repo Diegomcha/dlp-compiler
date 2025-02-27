@@ -48,7 +48,7 @@ fn_definition returns [FunctionDefinition ast]:
 
 fn_return_type returns [Type ast]:
                 bt=builtin_type    { $ast = $bt.ast; }
-              | 'void'             { $ast = new VoidType(); }
+              | 'void'             { $ast = VoidType.getInstance(); }
               ;
 
 fn_args returns [List<VariableDefinition> ast = new ArrayList<>()]:
@@ -72,21 +72,21 @@ type returns [Type ast]:
     ;
 
 builtin_type returns [Type ast]:
-              'int'     { $ast = new IntType(); }
-            | 'double'  { $ast = new RealType(); }
-            | 'char'    { $ast = new CharType(); }
+              'int'     { $ast = IntType.getInstance(); }
+            | 'double'  { $ast = RealType.getInstance(); }
+            | 'char'    { $ast = CharType.getInstance(); }
             ;
 
 struct_fields returns [List<StructField> ast = new ArrayList<>()]:
-               (v=var_defs { $ast.addAll($v.ast.stream().map(d -> new StructField(d.getLine(), d.getCol(), d.getName(), d.getType())).toList()); } )*
+               (v=var_defs { $ast.addAll($v.ast.stream().map(d -> new StructField(d)).toList()); } )*
              ;
 
 // statements
 
 statements returns [List<Statement> ast = new ArrayList<>()]:
-            e1=expression '=' e2=expression ';'                 { $ast.add(new Assignment($e1.ast.getLine(), $e1.ast.getCol(), $e1.ast, $e2.ast)); }
-          | 'read' es=exprs ';'                                 { $ast.addAll($es.ast.stream().map(e -> new Read(e.getLine(), e.getCol(), e)).toList()); }
-          | 'write' es=exprs ';'                                { $ast.addAll($es.ast.stream().map(e -> new Write(e.getLine(), e.getCol(), e)).toList()); }
+            e1=expression eq='=' e2=expression ';'              { $ast.add(new Assignment($eq.getLine(), $eq.getCharPositionInLine() + 1, $e1.ast, $e2.ast)); }
+          | 'read' es=exprs ';'                                 { $ast.addAll($es.ast.stream().map(e -> new Read(e)).toList()); }
+          | 'write' es=exprs ';'                                { $ast.addAll($es.ast.stream().map(e -> new Write(e)).toList()); }
           | r='return' e=expression ';'                         { $ast.add(new Return($r.getLine(), $r.getCharPositionInLine() + 1, $e.ast)); }
           | f=fn_invocation ';'                                 { $ast.add($f.ast); }
           | w='while' '(' e=expression ')' b=block              { $ast.add(new While($w.getLine(), $w.getCharPositionInLine() + 1, $e.ast, $b.ast)); }
@@ -119,19 +119,19 @@ expression returns [Expression ast]:
           | f=fn_invocation     { $ast = $f.ast; }
           // operands
           | '(' expression ')'                                              { $ast = $expression.ast; }
-          | e1=expression '[' e2=expression ']'                             { $ast = new Indexing($e1.ast.getLine(), $e1.ast.getCol(), $e1.ast, $e2.ast); }
-          | e=expression '.' ID                                             { $ast = new FieldAccess($e.ast.getLine(), $e.ast.getCol(), $e.ast, $ID.text); }
+          | e1=expression s='[' e2=expression ']'                           { $ast = new Indexing($s.getLine(), $s.getCharPositionInLine() + 1, $e1.ast, $e2.ast); }
+          | e=expression p='.' ID                                           { $ast = new FieldAccess($p.getLine(), $p.getCharPositionInLine() + 1, $e.ast, $ID.text); }
           | p='(' t=builtin_type ')' e=expression                           { $ast = new Cast($p.getLine(), $p.getCharPositionInLine() + 1, $e.ast, $t.ast); }
           | m='-' e=expression                                              { $ast = new UnaryMinus($m.getLine(), $m.getCharPositionInLine() + 1, $e.ast); }
           | n='!' e=expression                                              { $ast = new Negation($n.getLine(), $n.getCharPositionInLine() + 1, $e.ast); }
-          | e1=expression op=('*'|'/'|'%') e2=expression                    { $ast = ArithmeticFactory.create($e1.ast.getLine(), $e1.ast.getCol(), $op.text, $e1.ast, $e2.ast); }
-          | e1=expression op=('+'|'-') e2=expression                        { $ast = ArithmeticFactory.create($e1.ast.getLine(), $e1.ast.getCol(), $op.text, $e1.ast, $e2.ast); }
-          | e1=expression op=('>'|'>='|'<'|'<='|'!='|'==') e2=expression    { $ast = new ComparisonExpression($e1.ast.getLine(), $e1.ast.getCol(), $op.text, $e1.ast, $e2.ast); }
-          | e1=expression op=('&&'|'||') e2=expression                      { $ast = new LogicalExpression($e1.ast.getLine(), $e1.ast.getCol(), $op.text, $e1.ast, $e2.ast); }
+          | e1=expression op=('*'|'/'|'%') e2=expression                    { $ast = ArithmeticFactory.create($op.getLine(), $op.getCharPositionInLine() + 1, $op.text, $e1.ast, $e2.ast); }
+          | e1=expression op=('+'|'-') e2=expression                        { $ast = ArithmeticFactory.create($op.getLine(), $op.getCharPositionInLine() + 1, $op.text, $e1.ast, $e2.ast); }
+          | e1=expression op=('>'|'>='|'<'|'<='|'!='|'==') e2=expression    { $ast = new ComparisonExpression($op.getLine(), $op.getCharPositionInLine() + 1, $op.text, $e1.ast, $e2.ast); }
+          | e1=expression op=('&&'|'||') e2=expression                      { $ast = new LogicalExpression($op.getLine(), $op.getCharPositionInLine() + 1, $op.text, $e1.ast, $e2.ast); }
           ;
 
 fn_invocation returns [FuncInvocation ast]:
-               v=variable '(' p=fn_params ')'   { $ast = new FuncInvocation($v.ast.getLine(), $v.ast.getCol(), $v.ast, $p.ast); }
+               v=variable po='(' p=fn_params ')'   { $ast = new FuncInvocation($po.getLine(), $po.getCharPositionInLine() + 1, $v.ast, $p.ast); }
              ;
 
 variable returns [Variable ast]:
