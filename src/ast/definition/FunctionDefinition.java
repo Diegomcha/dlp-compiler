@@ -19,7 +19,6 @@ public class FunctionDefinition extends AbstractDefinition<FunctionType> {
         this.stmts = new ArrayList<>(stmts);
     }
 
-
     @Override
     public String toString() {
         return "FunctionDefinition{" +
