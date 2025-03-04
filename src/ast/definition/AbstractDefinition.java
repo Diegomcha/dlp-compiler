@@ -3,6 +3,8 @@ package ast.definition;
 import ast.node.AbstractLocatable;
 import ast.type.Type;
 
+import java.util.Objects;
+
 public abstract class AbstractDefinition<T extends Type> extends AbstractLocatable implements Definition {
 
     private final String name;
@@ -27,5 +29,17 @@ public abstract class AbstractDefinition<T extends Type> extends AbstractLocatab
         return super.toString() +
                 ", name='" + name + '\'' +
                 ", type=" + type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AbstractDefinition<?> that)) return false;
+        return Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name);
     }
 }
