@@ -35,3 +35,4 @@ bin/
 /src/parser/CmmLexer.interp
 /src/parser/CmmLexer.tokens
 /src/parser/CmmParser.java
+/diagrams/images/
