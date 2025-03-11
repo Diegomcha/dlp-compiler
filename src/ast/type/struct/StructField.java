@@ -3,6 +3,7 @@ package ast.type.struct;
 import ast.definition.AbstractDefinition;
 import ast.definition.VariableDefinition;
 import ast.type.Type;
+import semantic.Visitor;
 
 public class StructField extends AbstractDefinition<Type> {
 
@@ -22,5 +23,10 @@ public class StructField extends AbstractDefinition<Type> {
     @Override
     public String toString() {
         return "StructField{" + super.toString() + '}';
+    }
+
+    @Override
+    public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP param) {
+        return visitor.visit(this, param);
     }
 }

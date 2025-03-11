@@ -2,6 +2,7 @@ package ast.type;
 
 import errorhandler.ErrorHandler;
 import ast.node.AbstractLocatable;
+import semantic.Visitor;
 
 public class ErrorType extends AbstractLocatable implements Type {
 
@@ -17,6 +18,11 @@ public class ErrorType extends AbstractLocatable implements Type {
 
     @Override
     public String toString() {
-        return "Semantic Error (" + super.toString() + "):\n\t" + message;
+        return "Semantic Error (" + super.toString() + "): " + message;
+    }
+
+    @Override
+    public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP param) {
+        return visitor.visit(this, param);
     }
 }

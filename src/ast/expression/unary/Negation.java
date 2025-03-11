@@ -1,6 +1,7 @@
 package ast.expression.unary;
 
 import ast.expression.Expression;
+import semantic.Visitor;
 
 public class Negation extends UnaryExpression {
 
@@ -11,5 +12,10 @@ public class Negation extends UnaryExpression {
     @Override
     public String toString() {
         return "Negation{" + super.toString() + "}";
+    }
+
+    @Override
+    public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP param) {
+        return visitor.visit(this, param);
     }
 }

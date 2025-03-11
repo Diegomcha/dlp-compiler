@@ -2,8 +2,10 @@ package ast.statement.conditional;
 
 import ast.expression.Expression;
 import ast.statement.Statement;
+import semantic.Visitor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Conditional extends AbstractConditional {
@@ -15,11 +17,20 @@ public class Conditional extends AbstractConditional {
         this.elseBody = new ArrayList<>(elseBody);
     }
 
+    public List<Statement> getElseBody() {
+        return Collections.unmodifiableList(elseBody);
+    }
+
     @Override
     public String toString() {
         return "Conditional{" +
                 super.toString() +
                 ", elseBody=" + elseBody.size() +
                 '}';
+    }
+
+    @Override
+    public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP param) {
+        return visitor.visit(this, param);
     }
 }

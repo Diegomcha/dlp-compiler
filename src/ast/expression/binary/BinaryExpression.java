@@ -1,9 +1,9 @@
 package ast.expression.binary;
 
+import ast.expression.AbstractExpression;
 import ast.expression.Expression;
-import ast.node.AbstractLocatable;
 
-public abstract class BinaryExpression extends AbstractLocatable implements Expression {
+public abstract class BinaryExpression extends AbstractExpression {
 
     private final Expression op1;
     private final Expression op2;
@@ -12,6 +12,14 @@ public abstract class BinaryExpression extends AbstractLocatable implements Expr
         super(line, col);
         this.op1 = op1;
         this.op2 = op2;
+    }
+
+    public Expression getOp1() {
+        return op1;
+    }
+
+    public Expression getOp2() {
+        return op2;
     }
 
     @Override

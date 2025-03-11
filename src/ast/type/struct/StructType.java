@@ -2,8 +2,10 @@ package ast.type.struct;
 
 import ast.type.ErrorType;
 import ast.type.Type;
+import semantic.Visitor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,10 +34,19 @@ public class StructType implements Type {
         }
     }
 
+    public List<StructField> getFields() {
+        return Collections.unmodifiableList(fields);
+    }
+
     @Override
     public String toString() {
         return "StructType{" +
                 "fields=" + fields.size() +
                 '}';
+    }
+
+    @Override
+    public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP param) {
+        return visitor.visit(this, param);
     }
 }

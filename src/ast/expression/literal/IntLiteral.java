@@ -1,9 +1,9 @@
 package ast.expression.literal;
 
-import ast.expression.Expression;
-import ast.node.AbstractLocatable;
+import ast.expression.AbstractExpression;
+import semantic.Visitor;
 
-public class IntLiteral extends AbstractLocatable implements Expression {
+public class IntLiteral extends AbstractExpression {
 
     private final int value;
 
@@ -18,5 +18,10 @@ public class IntLiteral extends AbstractLocatable implements Expression {
                 super.toString() +
                 ", value=" + value +
                 '}';
+    }
+
+    @Override
+    public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP param) {
+        return visitor.visit(this, param);
     }
 }

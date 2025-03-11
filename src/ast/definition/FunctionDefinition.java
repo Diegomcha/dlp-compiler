@@ -2,8 +2,10 @@ package ast.definition;
 
 import ast.statement.Statement;
 import ast.type.FunctionType;
+import semantic.Visitor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class FunctionDefinition extends AbstractDefinition<FunctionType> {
@@ -19,6 +21,14 @@ public class FunctionDefinition extends AbstractDefinition<FunctionType> {
         this.stmts = new ArrayList<>(stmts);
     }
 
+    public List<VariableDefinition> getDefs() {
+        return Collections.unmodifiableList(defs);
+    }
+
+    public List<Statement> getStmts() {
+        return Collections.unmodifiableList(stmts);
+    }
+
     @Override
     public String toString() {
         return "FunctionDefinition{" +
@@ -26,5 +36,10 @@ public class FunctionDefinition extends AbstractDefinition<FunctionType> {
                 ", defs=" + defs.size() +
                 ", stmts=" + stmts.size() +
                 '}';
+    }
+
+    @Override
+    public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP param) {
+        return visitor.visit(this, param);
     }
 }

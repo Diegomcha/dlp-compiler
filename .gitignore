@@ -36,3 +36,6 @@ bin/
 /src/parser/CmmLexer.tokens
 /src/parser/CmmParser.java
 /diagrams/images/
+
+### .zip ###
+*.zip

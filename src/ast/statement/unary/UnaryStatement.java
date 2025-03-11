@@ -13,6 +13,10 @@ public abstract class UnaryStatement extends AbstractLocatable implements Statem
         this.expr = expr;
     }
 
+    public Expression getExpr() {
+        return expr;
+    }
+
     @Override
     public String toString() {
         return super.toString() +
