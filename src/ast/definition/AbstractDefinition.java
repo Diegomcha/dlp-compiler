@@ -7,6 +7,7 @@ public abstract class AbstractDefinition<T extends Type> extends AbstractLocatab
 
     private final String name;
     private final T type;
+    private int scope;
 
     protected AbstractDefinition(int line, int col, String name, T type) {
         super(line, col);
@@ -14,6 +15,7 @@ public abstract class AbstractDefinition<T extends Type> extends AbstractLocatab
         this.type = type;
     }
 
+    @Override
     public final String getName() {
         return name;
     }
@@ -23,9 +25,20 @@ public abstract class AbstractDefinition<T extends Type> extends AbstractLocatab
     }
 
     @Override
+    public final void setScope(int scope) {
+        this.scope = scope;
+    }
+
+    @Override
+    public final int getScope() {
+        return this.scope;
+    }
+
+    @Override
     public String toString() {
         return super.toString() +
                 ", name='" + name + '\'' +
-                ", type=" + type;
+                ", type=" + type +
+                ", scope=" + scope;
     }
 }

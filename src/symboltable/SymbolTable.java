@@ -6,30 +6,72 @@ import ast.definition.Definition;
 
 public class SymbolTable {
 
-    private int scope = 0;
-    private List<Map<String, Definition>> table;
+    private final List<Map<String, Definition>> table = new LinkedList<>();
 
+    /**
+     * Create a new symbol table with a global scope
+     */
     public SymbolTable() {
-        // TODO: todo
+        // Insert global scope
+        table.add(new HashMap<>());
     }
 
+    /**
+     * New scope
+     */
     public void set() {
-        // TODO: todo
+        table.add(new HashMap<>());
     }
 
+    /**
+     * Remove current scope
+     */
     public void reset() {
-        // TODO: todo
+        table.removeLast();
     }
 
+    /**
+     * Insert definition in current scope
+     *
+     * @param definition Definition to insert
+     * @return Whether the definition was inserted
+     */
     public boolean insert(Definition definition) {
-        // TODO: todo
+        Map<String, Definition> currentScope = table.getLast();
+
+        if (!currentScope.containsKey(definition.getName())) {
+            definition.setScope(table.size() - 1);
+            currentScope.put(definition.getName(), definition);
+            return true;
+        }
+
+        return false;
     }
 
+    /**
+     * Find definition in any scope
+     *
+     * @param id Identifier to find
+     * @return Definition if found, null otherwise
+     */
     public Definition find(String id) {
-        // TODO: todo
+        for (int i = table.size() - 1; i >= 0; i--) {
+            Map<String, Definition> currentScope = table.get(i);
+            if (currentScope.containsKey(id))
+                return currentScope.get(id);
+        }
+
+        return null;
     }
 
+    /**
+     * Find definition in current scope
+     *
+     * @param id Identifier to find
+     * @return Definition if found, null otherwise
+     */
     public Definition findInCurrentScope(String id) {
-        // TODO: todo
+        Map<String, Definition> currentScope = table.getLast();
+        return currentScope.get(id);
     }
 }
