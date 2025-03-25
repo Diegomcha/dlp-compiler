@@ -27,7 +27,7 @@ public class IdentificationVisitor extends AbstractTraversal {
 
         Definition def = symbolTable.find(var.getName());
         if (def == null)
-            new ErrorType(var.getLine(), var.getCol(), "Variable '" + var.getName() + "' not defined");
+            var.setType(new ErrorType(var.getLine(), var.getCol(), "Variable '" + var.getName() + "' not defined"));
         else
             var.setDefinition(def);
 

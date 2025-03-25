@@ -1,9 +1,9 @@
 package ast.type.builtin;
 
-import ast.type.Type;
+import ast.type.AbstractType;
 import semantic.Visitor;
 
-public class VoidType implements Type {
+public class VoidType extends AbstractType {
 
     private static final VoidType instance = new VoidType();
 
@@ -17,6 +17,11 @@ public class VoidType implements Type {
     @Override
     public String toString() {
         return "VoidType";
+    }
+
+    @Override
+    public String typeExpression() {
+        return "void";
     }
 
     @Override

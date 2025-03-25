@@ -1,10 +1,9 @@
 package ast.statement;
 
 import ast.expression.Expression;
-import ast.node.AbstractLocatable;
 import semantic.Visitor;
 
-public class Assignment extends AbstractLocatable implements Statement {
+public class Assignment extends AbstractStatement {
 
     private final Expression assigned;
     private final Expression value;
@@ -26,7 +25,8 @@ public class Assignment extends AbstractLocatable implements Statement {
     @Override
     public String toString() {
         return "Assignment{" +
-                "assigned=" + assigned +
+                super.toString() +
+                ", assigned=" + assigned +
                 ", value=" + value +
                 '}';
     }

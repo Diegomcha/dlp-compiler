@@ -25,6 +25,10 @@ public class StructField extends AbstractDefinition<Type> {
         return "StructField{" + super.toString() + '}';
     }
 
+    public String typeExpression() {
+        return this.getType().typeExpression() + " " + this.getName();
+    }
+
     @Override
     public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP param) {
         return visitor.visit(this, param);

@@ -7,8 +7,9 @@ import semantic.Visitor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
-public class FunctionType implements Type {
+public class FunctionType extends AbstractType {
 
     private final List<VariableDefinition> params;
     private final Type returnType;
@@ -42,7 +43,38 @@ public class FunctionType implements Type {
     }
 
     @Override
+    public String typeExpression() {
+        return "(" + String.join(", ", this.params.stream().map(vd -> vd.getType().typeExpression()).toList())
+                + ") -> "
+                + this.getReturnType().typeExpression();
+    }
+
+    @Override
     public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP param) {
         return visitor.visit(this, param);
+    }
+
+    @Override
+    public Type parenthesis(List<Type> argTypes) {
+        // Find any ErrorType within the arguments
+        Optional<ErrorType> argError = argTypes.stream()
+                .filter(t -> t instanceof ErrorType)
+                .map(t -> (ErrorType) t)
+                .findFirst();
+
+        if (argError.isPresent())
+            return argError.get();
+
+        if (argTypes.size() != params.size())
+            return new ErrorType(String.format("Wrong number of parameters: expected '%d', got '%d'", params.size(), argTypes.size()));
+
+        for (int i = 0; i < params.size(); i++) {
+            Type expected = params.get(i).getType();
+            Type got = argTypes.get(i);
+            if (expected != got) // Compare references since we are using singletons for built-in types
+                return new ErrorType(String.format("Invalid parameter type: expected '%s', got '%s'", expected.typeExpression(), got.typeExpression()));
+        }
+
+        return this.returnType;
     }
 }

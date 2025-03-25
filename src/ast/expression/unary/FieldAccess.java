@@ -12,6 +12,10 @@ public class FieldAccess extends UnaryExpression {
         this.property = property;
     }
 
+    public String getProperty() {
+        return property;
+    }
+
     @Override
     public String toString() {
         return "FieldAccess{" +

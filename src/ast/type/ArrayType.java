@@ -1,8 +1,9 @@
 package ast.type;
 
+import ast.type.builtin.IntType;
 import semantic.Visitor;
 
-public class ArrayType implements Type {
+public class ArrayType extends AbstractType {
 
     private Type type;
     private final int size;
@@ -36,7 +37,20 @@ public class ArrayType implements Type {
     }
 
     @Override
+    public String typeExpression() {
+        return "array[" + this.type.typeExpression() + "]";
+    }
+
+    @Override
     public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP param) {
         return visitor.visit(this, param);
+    }
+
+    @Override
+    public Type squareBrackets(Type idxType) {
+        if (idxType instanceof IntType)
+            return this.type;
+
+        return super.squareBrackets(idxType);
     }
 }

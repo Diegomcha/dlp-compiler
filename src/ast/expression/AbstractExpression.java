@@ -34,6 +34,6 @@ public abstract class AbstractExpression extends AbstractLocatable implements Ex
 
     @Override
     public String toString() {
-        return "lValue=" + lValue;
+        return "lValue=" + lValue + ", type=" + type;
     }
 }

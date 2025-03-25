@@ -28,7 +28,7 @@ public class Main {
 
         Program ast = parser.program().ast;
 
-        // Run Vistors
+        // Run visitors
         ast.accept(new IdentificationVisitor(), null);
         ast.accept(new TypeCheckingVisitor(), null);
 

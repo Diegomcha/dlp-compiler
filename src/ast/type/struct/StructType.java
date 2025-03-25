@@ -1,15 +1,13 @@
 package ast.type.struct;
 
+import ast.type.AbstractType;
 import ast.type.ErrorType;
 import ast.type.Type;
 import semantic.Visitor;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
-public class StructType implements Type {
+public class StructType extends AbstractType {
 
     private final List<StructField> fields;
 
@@ -46,7 +44,22 @@ public class StructType implements Type {
     }
 
     @Override
+    public String typeExpression() {
+        return "struct {" + String.join(", ", fields.stream().map(StructField::typeExpression).toList()) + "}";
+    }
+
+    @Override
     public <TP, TR> TR accept(Visitor<TP, TR> visitor, TP param) {
         return visitor.visit(this, param);
+    }
+
+    @Override
+    public Type dot(String fieldName) {
+        Optional<StructField> field = fields.stream().filter(f -> f.getName().equals(fieldName)).findFirst();
+
+        if (field.isEmpty())
+            return new ErrorType(String.format("Field '%s' is not defined", fieldName));
+
+        return field.get().getType();
     }
 }

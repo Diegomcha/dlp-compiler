@@ -1,14 +1,14 @@
 package ast.statement.conditional;
 
 import ast.expression.Expression;
-import ast.node.AbstractLocatable;
+import ast.statement.AbstractStatement;
 import ast.statement.Statement;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractConditional extends AbstractLocatable implements Statement {
+public abstract class AbstractConditional extends AbstractStatement {
 
     private final Expression condition;
     private final List<Statement> body;
