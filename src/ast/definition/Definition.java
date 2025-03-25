@@ -1,6 +1,7 @@
 package ast.definition;
 
 import ast.node.Locatable;
+import ast.type.Type;
 
 public interface Definition extends Locatable {
 
@@ -9,4 +10,6 @@ public interface Definition extends Locatable {
     void setScope(int scope);
 
     String getName();
+
+    Type getType();
 }

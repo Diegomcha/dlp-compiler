@@ -180,6 +180,8 @@ public class TypeCheckingVisitor extends AbstractTraversal {
     public Void visit(Variable var, Void param) {
         super.visit(var, param);
 
+        var.setType(var.getDefinition() != null ? var.getDefinition().getType() : null);
+
         var.setLValue(true);
         return null;
     }
