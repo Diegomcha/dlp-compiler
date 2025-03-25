@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Main (TYPEPHASE-WRONG1)" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="Main" />
+    <module name="DLP" />
+    <option name="PROGRAM_PARAMETERS" value="inputs/typeCheckingPhase/input1-wrong.txt" />
+    <option name="VM_PARAMETERS" value="-ea" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
