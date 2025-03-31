@@ -1,39 +1,40 @@
 package ast.type;
 
 import ast.node.ASTNode;
+import ast.node.Locatable;
 
 import java.util.List;
 
 public interface Type extends ASTNode {
-    Type squareBrackets(Type idxType);
+    Type squareBrackets(Type idxType, Locatable location);
 
-    Type parenthesis(List<Type> argTypes);
+    Type parenthesis(List<Type> argTypes, Locatable location);
 
-    Type arithmetic(Type type);
+    Type arithmetic(Type type, Locatable location);
 
-    Type compare(Type type);
+    Type compare(Type type, Locatable location);
 
-    Type logicCompare(Type type);
+    Type logicCompare(Type type, Locatable location);
 
-    Type percentage(Type type);
+    Type percentage(Type type, Locatable location);
 
-    Type cast(Type type);
+    Type cast(Type type, Locatable location);
 
-    Type dot(String fieldName);
+    Type dot(String fieldName, Locatable location);
 
-    Type exclamation();
+    Type exclamation(Locatable location);
 
-    Type minus();
+    Type minus(Locatable location);
 
-    void assign(Type type);
+    void assign(Type type, Locatable location);
 
-    void ret(Type type);
+    void ret(Type type, Locatable location);
 
-    void mustBeReadable();
+    void mustBeReadable(Locatable location);
 
-    void mustBeWritable();
+    void mustBeWritable(Locatable location);
 
-    void mustBeCondition();
+    void mustBeCondition(Locatable location);
 
     String typeExpression();
 }

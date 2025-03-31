@@ -170,7 +170,7 @@ public class TypeCheckingVisitor extends AbstractTraversal {
         super.visit(invocation, param);
 
         invocation.setLValue(false);
-        invocation.setType(invocation.getFn().getType().parenthesis(invocation.getArgs().stream().map(Expression::getType).toList()));
+        invocation.setType(invocation.getFn().getType().parenthesis(invocation.getArgs().stream().map(Expression::getType).toList(), invocation));
 
         return null;
     }
@@ -183,7 +183,7 @@ public class TypeCheckingVisitor extends AbstractTraversal {
         if (!assignment.getAssigned().getLValue())
             new ErrorType(assignment.getAssigned().getLine(), assignment.getAssigned().getCol(), "L-value expected");
 
-        assignment.getAssigned().getType().assign(assignment.getValue().getType());
+        assignment.getAssigned().getType().assign(assignment.getValue().getType(), assignment);
 
         return null;
     }
@@ -196,7 +196,7 @@ public class TypeCheckingVisitor extends AbstractTraversal {
         if (!read.getExpr().getLValue())
             new ErrorType(read.getExpr().getLine(), read.getExpr().getCol(), "L-value expected");
 
-        read.getExpr().getType().mustBeReadable();
+        read.getExpr().getType().mustBeReadable(read);
 
         return null;
     }
@@ -218,7 +218,7 @@ public class TypeCheckingVisitor extends AbstractTraversal {
         super.visit(idx, param);
 
         idx.setLValue(true);
-        idx.setType(idx.getElement().getType().squareBrackets(idx.getIndex().getType()));
+        idx.setType(idx.getElement().getType().squareBrackets(idx.getIndex().getType(), idx));
 
         return null;
     }
@@ -228,7 +228,7 @@ public class TypeCheckingVisitor extends AbstractTraversal {
         super.visit(arithmetic, param);
 
         arithmetic.setLValue(false);
-        arithmetic.setType(arithmetic.getOp1().getType().arithmetic(arithmetic.getOp2().getType()));
+        arithmetic.setType(arithmetic.getOp1().getType().arithmetic(arithmetic.getOp2().getType(), arithmetic));
 
         return null;
     }
@@ -238,7 +238,7 @@ public class TypeCheckingVisitor extends AbstractTraversal {
         super.visit(comparison, param);
 
         comparison.setLValue(false);
-        comparison.setType(comparison.getOp1().getType().compare(comparison.getOp2().getType()));
+        comparison.setType(comparison.getOp1().getType().compare(comparison.getOp2().getType(), comparison));
 
         return null;
     }
@@ -248,7 +248,7 @@ public class TypeCheckingVisitor extends AbstractTraversal {
         super.visit(logical, param);
 
         logical.setLValue(false);
-        logical.setType(logical.getOp1().getType().logicCompare(logical.getOp2().getType()));
+        logical.setType(logical.getOp1().getType().logicCompare(logical.getOp2().getType(), logical));
 
         return null;
     }
@@ -258,7 +258,7 @@ public class TypeCheckingVisitor extends AbstractTraversal {
         super.visit(reminder, param);
 
         reminder.setLValue(false);
-        reminder.setType(reminder.getOp1().getType().percentage(reminder.getOp2().getType()));
+        reminder.setType(reminder.getOp1().getType().percentage(reminder.getOp2().getType(), reminder));
 
         return null;
     }
@@ -298,7 +298,7 @@ public class TypeCheckingVisitor extends AbstractTraversal {
         super.visit(cast, param);
 
         cast.setLValue(false);
-        cast.setType(cast.getExpr().getType().cast(cast.getType()));
+        cast.setType(cast.getExpr().getType().cast(cast.getType(), cast));
 
         return null;
     }
@@ -308,7 +308,7 @@ public class TypeCheckingVisitor extends AbstractTraversal {
         super.visit(fieldAccess, param);
 
         fieldAccess.setLValue(true);
-        fieldAccess.setType(fieldAccess.getExpr().getType().dot(fieldAccess.getProperty()));
+        fieldAccess.setType(fieldAccess.getExpr().getType().dot(fieldAccess.getProperty(), fieldAccess));
 
         return null;
     }
@@ -318,7 +318,7 @@ public class TypeCheckingVisitor extends AbstractTraversal {
         super.visit(negation, param);
 
         negation.setLValue(false);
-        negation.setType(negation.getExpr().getType().exclamation());
+        negation.setType(negation.getExpr().getType().exclamation(negation));
 
         return null;
     }
@@ -328,7 +328,7 @@ public class TypeCheckingVisitor extends AbstractTraversal {
         super.visit(unaryMinus, param);
 
         unaryMinus.setLValue(false);
-        unaryMinus.setType(unaryMinus.getExpr().getType().minus());
+        unaryMinus.setType(unaryMinus.getExpr().getType().minus(unaryMinus));
 
         return null;
     }
@@ -340,7 +340,7 @@ public class TypeCheckingVisitor extends AbstractTraversal {
 
         super.visit(whl, param);
 
-        whl.getCondition().getType().mustBeCondition();
+        whl.getCondition().getType().mustBeCondition(whl);
 
         return null;
     }
@@ -353,7 +353,7 @@ public class TypeCheckingVisitor extends AbstractTraversal {
 
         super.visit(cond, param);
 
-        cond.getCondition().getType().mustBeCondition();
+        cond.getCondition().getType().mustBeCondition(cond);
 
         return null;
     }
@@ -362,7 +362,7 @@ public class TypeCheckingVisitor extends AbstractTraversal {
     public Void visit(Return ret, Void param) {
         super.visit(ret, param);
 
-        ret.getExpr().getType().ret(ret.getReturnType());
+        ret.getExpr().getType().ret(ret.getReturnType(), ret);
 
         return null;
     }
@@ -371,7 +371,7 @@ public class TypeCheckingVisitor extends AbstractTraversal {
     public Void visit(Write write, Void param) {
         super.visit(write, param);
 
-        write.getExpr().getType().mustBeWritable();
+        write.getExpr().getType().mustBeWritable(write);
 
         return null;
     }

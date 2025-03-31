@@ -1,5 +1,6 @@
 package ast.type;
 
+import ast.node.Locatable;
 import ast.type.builtin.IntType;
 import semantic.Visitor;
 
@@ -47,10 +48,10 @@ public class ArrayType extends AbstractType {
     }
 
     @Override
-    public Type squareBrackets(Type idxType) {
+    public Type squareBrackets(Type idxType, Locatable location) {
         if (idxType instanceof IntType)
             return this.type;
 
-        return super.squareBrackets(idxType);
+        return super.squareBrackets(idxType, location);
     }
 }

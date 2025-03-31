@@ -1,6 +1,7 @@
 package ast.type;
 
 import ast.definition.VariableDefinition;
+import ast.node.Locatable;
 import ast.type.builtin.VoidType;
 import semantic.Visitor;
 
@@ -55,7 +56,7 @@ public class FunctionType extends AbstractType {
     }
 
     @Override
-    public Type parenthesis(List<Type> argTypes) {
+    public Type parenthesis(List<Type> argTypes, Locatable location) {
         // Find any ErrorType within the arguments
         Optional<ErrorType> argError = argTypes.stream()
                 .filter(t -> t instanceof ErrorType)
@@ -66,13 +67,13 @@ public class FunctionType extends AbstractType {
             return argError.get();
 
         if (argTypes.size() != params.size())
-            return new ErrorType(String.format("Wrong number of parameters: expected '%d', got '%d'", params.size(), argTypes.size()));
+            return new ErrorType(location, String.format("Wrong number of parameters: expected '%d', got '%d'", params.size(), argTypes.size()));
 
         for (int i = 0; i < params.size(); i++) {
             Type expected = params.get(i).getType();
             Type got = argTypes.get(i);
             if (expected != got) // Compare references since we are using singletons for built-in types
-                return new ErrorType(String.format("Invalid parameter type: expected '%s', got '%s'", expected.typeExpression(), got.typeExpression()));
+                return new ErrorType(location, String.format("Invalid parameter type: expected '%s', got '%s'", expected.typeExpression(), got.typeExpression()));
         }
 
         return this.returnType;

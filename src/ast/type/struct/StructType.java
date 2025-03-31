@@ -1,5 +1,6 @@
 package ast.type.struct;
 
+import ast.node.Locatable;
 import ast.type.AbstractType;
 import ast.type.ErrorType;
 import ast.type.Type;
@@ -54,11 +55,11 @@ public class StructType extends AbstractType {
     }
 
     @Override
-    public Type dot(String fieldName) {
+    public Type dot(String fieldName, Locatable location) {
         Optional<StructField> field = fields.stream().filter(f -> f.getName().equals(fieldName)).findFirst();
 
         if (field.isEmpty())
-            return new ErrorType(String.format("Field '%s' is not defined", fieldName));
+            return new ErrorType(location, String.format("Field '%s' is not defined", fieldName));
 
         return field.get().getType();
     }

@@ -1,5 +1,6 @@
 package ast.type.builtin;
 
+import ast.node.Locatable;
 import ast.type.AbstractType;
 import ast.type.Type;
 import semantic.Visitor;
@@ -31,50 +32,50 @@ public class RealType extends AbstractType {
     }
 
     @Override
-    public Type arithmetic(Type type) {
+    public Type arithmetic(Type type, Locatable location) {
         if (type instanceof RealType)
             return this;
 
-        return super.arithmetic(type);
+        return super.arithmetic(type, location);
     }
 
     @Override
-    public Type compare(Type type) {
+    public Type compare(Type type, Locatable location) {
         if (type instanceof RealType)
             return IntType.getInstance();
 
-        return super.compare(type);
+        return super.compare(type, location);
     }
 
     @Override
-    public Type minus() {
+    public Type minus(Locatable location) {
         return this;
     }
 
     @Override
-    public Type cast(Type type) {
+    public Type cast(Type type, Locatable location) {
         return type;
     }
 
     @Override
-    public void assign(Type type) {
+    public void assign(Type type, Locatable location) {
         if (type != this) // Comparison by reference since we are using singletons
-            super.assign(type);
+            super.assign(type, location);
     }
 
     @Override
-    public void mustBeReadable() {
+    public void mustBeReadable(Locatable location) {
         // It's readable
     }
 
     @Override
-    public void mustBeWritable() {
+    public void mustBeWritable(Locatable location) {
         // It's writable
     }
 
     @Override
-    public void ret(Type type) {
+    public void ret(Type type, Locatable location) {
         if (type != this) // Comparison by reference since we are using singletons
-            super.ret(type);
+            super.ret(type, location);
     }
 }
