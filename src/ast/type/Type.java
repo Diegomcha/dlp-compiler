@@ -37,4 +37,6 @@ public interface Type extends ASTNode {
     void mustBeCondition(Locatable location);
 
     String typeExpression();
+
+    int numberOfBytes();
 }

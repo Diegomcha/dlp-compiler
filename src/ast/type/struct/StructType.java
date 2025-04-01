@@ -63,4 +63,9 @@ public class StructType extends AbstractType {
 
         return field.get().getType();
     }
+
+    @Override
+    public int numberOfBytes() {
+        return fields.stream().mapToInt(f -> f.getType().numberOfBytes()).sum();
+    }
 }

@@ -7,6 +7,8 @@ import semantic.Visitor;
 
 public class StructField extends AbstractDefinition<Type> {
 
+    private int offset;
+
     /**
      * Commodity constructor to create a StructField from a VariableDefinition.
      *
@@ -20,9 +22,20 @@ public class StructField extends AbstractDefinition<Type> {
         super(line, col, name, type);
     }
 
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
     @Override
     public String toString() {
-        return "StructField{" + super.toString() + '}';
+        return "StructField{" +
+                super.toString() +
+                ", offset=" + offset +
+                '}';
     }
 
     public String typeExpression() {

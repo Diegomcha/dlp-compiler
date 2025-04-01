@@ -94,4 +94,8 @@ public abstract class AbstractType implements Type {
         new ErrorType(location, String.format("Type '%s' cannot be used as a condition", this.typeExpression()));
     }
 
+    @Override
+    public int numberOfBytes() {
+        throw new UnsupportedOperationException("numberOfBytes not implemented for type :" + this.typeExpression());
+    }
 }

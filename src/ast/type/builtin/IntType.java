@@ -104,4 +104,9 @@ public class IntType extends AbstractType {
         if (type != this) // Comparison by reference since we are using singletons
             super.ret(type, location);
     }
+
+    @Override
+    public int numberOfBytes() {
+        return 2;
+    }
 }

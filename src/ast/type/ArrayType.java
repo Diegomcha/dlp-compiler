@@ -54,4 +54,9 @@ public class ArrayType extends AbstractType {
 
         return super.squareBrackets(idxType, location);
     }
+
+    @Override
+    public int numberOfBytes() {
+        return type.numberOfBytes() + this.size;
+    }
 }
