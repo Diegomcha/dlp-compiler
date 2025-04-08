@@ -97,7 +97,7 @@ public class OffsetVisitor extends AbstractTraversal {
         super.visit(fnType, param);
 
         int paramsOffsetSum = 4; // to skip control info
-        for (VariableDefinition var : fnType.getParams().reversed()) { // right-to-left (I'm not sure if reverse exists in Java)
+        for (VariableDefinition var : fnType.getParams().reversed()) { // right-to-left
             var.setOffset(paramsOffsetSum);
             paramsOffsetSum += var.getType().numberOfBytes();
         }

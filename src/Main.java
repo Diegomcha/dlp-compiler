@@ -1,5 +1,7 @@
 import ast.Program;
+import codegeneration.ExecuteCGVisitor;
 import codegeneration.OffsetVisitor;
+import codegeneration.util.CodeGenerator;
 import errorhandler.ErrorHandler;
 import introspector.model.IntrospectorModel;
 import introspector.view.IntrospectorView;
@@ -14,8 +16,8 @@ import semantic.TypeCheckingVisitor;
 public class Main {
 
     public static void main(String... args) throws Exception {
-        if (args.length < 1) {
-            System.err.println("Please, pass me the input file.");
+        if (args.length < 2) {
+            System.err.println("Please, pass me the input and output filenames.");
             return;
         }
 
@@ -35,6 +37,9 @@ public class Main {
 
         // Run CG visitors
         ast.accept(new OffsetVisitor(), null);
+        try(CodeGenerator cg = new CodeGenerator(args[0], args[1])) {
+            ast.accept(new ExecuteCGVisitor(cg), null);
+        }
 
         if (ErrorHandler.getInstance().anyError())
             ErrorHandler.getInstance().showErrors(System.err);

@@ -12,4 +12,8 @@ public interface Definition extends Locatable {
     String getName();
 
     Type getType();
+
+    int getOffset();
+
+    void setOffset(int offset);
 }

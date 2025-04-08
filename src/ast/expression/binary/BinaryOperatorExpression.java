@@ -11,6 +11,10 @@ public abstract class BinaryOperatorExpression extends BinaryExpression {
         this.operator = operator;
     }
 
+    public String getOperator() {
+        return operator;
+    }
+
     @Override
     public String toString() {
         return super.toString() +

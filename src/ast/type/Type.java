@@ -2,6 +2,7 @@ package ast.type;
 
 import ast.node.ASTNode;
 import ast.node.Locatable;
+import codegeneration.util.CodeGenerator;
 
 import java.util.List;
 
@@ -39,4 +40,10 @@ public interface Type extends ASTNode {
     String typeExpression();
 
     int numberOfBytes();
+
+    void convertTo(Type type, CodeGenerator cg);
+
+    Type supertype(Type type);
+
+    String suffix();
 }

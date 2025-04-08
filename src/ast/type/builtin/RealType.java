@@ -3,6 +3,7 @@ package ast.type.builtin;
 import ast.node.Locatable;
 import ast.type.AbstractType;
 import ast.type.Type;
+import codegeneration.util.CodeGenerator;
 import semantic.Visitor;
 
 public class RealType extends AbstractType {
@@ -82,5 +83,42 @@ public class RealType extends AbstractType {
     @Override
     public int numberOfBytes() {
         return 4;
+    }
+
+    @Override
+    public void convertTo(Type type, CodeGenerator cg) {
+        switch (type) {
+            case CharType _t:
+                cg.f2i();
+                cg.i2b();
+                break;
+            case IntType _t:
+                cg.f2i();
+                break;
+            case RealType _t:
+                // no conversion needed
+                break;
+
+            default:
+                // error
+                super.convertTo(type, cg);
+        }
+    }
+
+    @Override
+    public Type supertype(Type type) {
+        return switch (type) {
+            case CharType _t -> this;
+            case IntType _t -> this;
+            case RealType _t -> this;
+
+            // error
+            default -> super.supertype(type);
+        };
+    }
+
+    @Override
+    public String suffix() {
+        return "f";
     }
 }

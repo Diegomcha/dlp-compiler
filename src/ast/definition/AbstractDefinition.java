@@ -8,6 +8,7 @@ public abstract class AbstractDefinition<T extends Type> extends AbstractLocatab
     private final String name;
     private final T type;
     private int scope;
+    private int offset;
 
     protected AbstractDefinition(int line, int col, String name, T type) {
         super(line, col);
@@ -35,10 +36,21 @@ public abstract class AbstractDefinition<T extends Type> extends AbstractLocatab
     }
 
     @Override
+    public final int getOffset() {
+        return offset;
+    }
+
+    @Override
+    public final void setOffset(int offset) {
+        this.offset = offset;
+    }
+
+    @Override
     public String toString() {
         return super.toString() +
                 ", name='" + name + '\'' +
                 ", type=" + type +
-                ", scope=" + scope;
+                ", scope=" + scope +
+                ", offset=" + offset;
     }
 }

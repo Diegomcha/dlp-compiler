@@ -37,5 +37,6 @@ bin/
 /src/parser/CmmParser.java
 /diagrams/images/
 
-### .zip ###
+### Custom ###
 *.zip
+output.txt

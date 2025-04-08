@@ -1,6 +1,7 @@
 package ast.type;
 
 import ast.node.Locatable;
+import codegeneration.util.CodeGenerator;
 
 import java.util.List;
 
@@ -97,5 +98,20 @@ public abstract class AbstractType implements Type {
     @Override
     public int numberOfBytes() {
         throw new UnsupportedOperationException("numberOfBytes not implemented for type :" + this.typeExpression());
+    }
+
+    @Override
+    public void convertTo(Type type, CodeGenerator cg) {
+        throw new UnsupportedOperationException("convertTo not implemented for types :" + this.typeExpression() + ", " + type.typeExpression());
+    }
+
+    @Override
+    public Type supertype(Type type) {
+        throw new UnsupportedOperationException("supertype not implemented for types :" + this.typeExpression() + ", " + type.typeExpression());
+    }
+
+    @Override
+    public String suffix() {
+        throw new UnsupportedOperationException("suffix not implemented for type :" + this.typeExpression());
     }
 }
