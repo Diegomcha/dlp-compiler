@@ -24,7 +24,7 @@ public class RealType extends AbstractType {
 
     @Override
     public String typeExpression() {
-        return "double";
+        return "real";
     }
 
     @Override

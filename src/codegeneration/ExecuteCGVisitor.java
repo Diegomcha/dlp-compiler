@@ -4,6 +4,8 @@ import ast.Program;
 import ast.definition.FunctionDefinition;
 import ast.definition.VariableDefinition;
 import ast.statement.Assignment;
+import ast.statement.conditional.Conditional;
+import ast.statement.conditional.While;
 import ast.statement.unary.Read;
 import ast.statement.unary.Write;
 import ast.type.builtin.VoidType;
@@ -48,13 +50,33 @@ execute[[Program: program -> definition*]] =
     <halt>
     definition*.filter(def -> def instanceof FunctionDefinition).forEach(def -> execute[[def]])
 
+execute[[While: statement -> expression statement*]] =
+    String condLabel = cg.nextLabel(),
+           exitLabel = cg.nextLabel();
+
+    condLabel <:>
+    value[[expression]]
+    <jz > exitLabel
+    statement*.forEach(st -> execute[[st]])
+    <jmp > condLabel
+    exitLabel <:>
+
+execute[[Conditional: statement -> expression statementB* statementE*]] =
+    String elseLabel = cg.nextLabel(),
+           exitLabel = cg.nextLabel();
+
+    value[[expression]]
+    <jz > elseLabel
+    statementB*.forEach(st -> execute[[st]]);
+    <jmp > exitLabel
+    elseLabel <:>
+    statementE*.forEach(st -> execute[[st]]);
+    exitLabel <:>
+
  */
 
 
 public class ExecuteCGVisitor extends AbstractCGVisitor<Void, Void> {
-
-    private final AddressCGVisitor addrVisitor = new AddressCGVisitor(this.cg);
-    private final ValueCGVisitor valVisitor = new ValueCGVisitor(this.cg);
 
     public ExecuteCGVisitor(CodeGenerator cg) {
         super(cg);
@@ -65,7 +87,7 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<Void, Void> {
         this.cg.pragmaLine(read.getLine());
         this.cg.comment("- Read:");
 
-        read.getExpr().accept(this.addrVisitor, null);
+        read.getExpr().accept(this.cg.addrVisitor, null);
         this.cg.in(read.getExpr().getType());
         this.cg.store(read.getExpr().getType());
         return null;
@@ -76,7 +98,7 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<Void, Void> {
         this.cg.pragmaLine(write.getLine());
         this.cg.comment("- Write:");
 
-        write.getExpr().accept(this.valVisitor, null);
+        write.getExpr().accept(this.cg.valVisitor, null);
         this.cg.out(write.getExpr().getType());
         return null;
     }
@@ -86,8 +108,8 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<Void, Void> {
         this.cg.pragmaLine(assignment.getLine());
         this.cg.comment("- Assignment:");
 
-        assignment.getAssigned().accept(this.addrVisitor, null);
-        assignment.getValue().accept(this.valVisitor, null);
+        assignment.getAssigned().accept(this.cg.addrVisitor, null);
+        assignment.getValue().accept(this.cg.valVisitor, null);
         this.cg.store(assignment.getAssigned().getType());
         return null;
     }
@@ -131,7 +153,6 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<Void, Void> {
         return null;
     }
 
-    // TODO: Check if this is correct
     @Override
     public Void visit(Program program, Void param) {
         this.cg.comment("* Global variables:");
@@ -147,6 +168,71 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<Void, Void> {
             s.accept(this, null);
             this.cg.newLine();
         });
+        return null;
+    }
+
+    @Override
+    public Void visit(While whl, Void param) {
+        this.cg.pragmaLine(whl.getLine());
+        this.cg.comment("- While:");
+
+        String condLabel = this.cg.nextLabel();
+        String exitLabel = this.cg.nextLabel();
+
+        // Condition
+        this.cg.label(condLabel);
+        whl.getCondition().accept(this.cg.valVisitor, null);
+        this.cg.jz(exitLabel);
+        this.cg.newLine();
+
+        // Body
+        this.cg.incrementIndent();
+        whl.getBody().forEach(st -> {
+            st.accept(this, null);
+            this.cg.newLine();
+        });
+        this.cg.jmp(condLabel);
+        this.cg.decrementIndent();
+
+        this.cg.decrementIndent();
+        this.cg.label(exitLabel);
+
+        return null;
+    }
+
+    @Override
+    public Void visit(Conditional conditional, Void param) {
+        String elseLabel = this.cg.nextLabel();
+        String exitLabel = this.cg.nextLabel();
+
+        this.cg.pragmaLine(conditional.getLine());
+        this.cg.comment("- Conditional:");
+
+        // Condition
+        conditional.getCondition().accept(this.cg.valVisitor, null);
+        this.cg.jz(elseLabel);
+        this.cg.newLine();
+
+        // Body
+        this.cg.incrementIndent();
+        conditional.getBody().forEach(st -> {
+            st.accept(this, null);
+            this.cg.newLine();
+        });
+        this.cg.jmp(exitLabel);
+        this.cg.decrementIndent();
+        this.cg.newLine();
+
+        // Else
+        this.cg.label(elseLabel);
+        this.cg.incrementIndent();
+        conditional.getElseBody().forEach(st -> {
+            st.accept(this, null);
+            this.cg.newLine();
+        });
+        this.cg.decrementIndent();
+        this.cg.label(exitLabel);
+
         return null;
     }
 }

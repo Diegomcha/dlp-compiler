@@ -37,6 +37,10 @@ public class StructType extends AbstractType {
         return Collections.unmodifiableList(fields);
     }
 
+    public StructField findField(String name) {
+        return fields.stream().filter(f -> f.getName().equals(name)).findFirst().orElseThrow();
+    }
+
     @Override
     public String toString() {
         return "StructType{" +

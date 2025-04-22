@@ -1,13 +1,20 @@
 package codegeneration.util;
 
 import ast.type.Type;
+import codegeneration.AddressCGVisitor;
+import codegeneration.ValueCGVisitor;
 
 import java.io.FileWriter;
 import java.io.IOException;
 
 public class CodeGenerator implements AutoCloseable {
     private final FileWriter fw;
+
+    public final AddressCGVisitor addrVisitor = new AddressCGVisitor(this);
+    public final ValueCGVisitor valVisitor = new ValueCGVisitor(this);
+
     private int indent = 0;
+    private int labelID = 0;
 
     public CodeGenerator(String source, String destination) throws IOException {
         this.fw = new FileWriter(destination);
@@ -20,12 +27,20 @@ public class CodeGenerator implements AutoCloseable {
         this.fw.close();
     }
 
+    // * Indent
+
     public void incrementIndent() {
         this.indent++;
     }
 
     public void decrementIndent() {
         this.indent--;
+    }
+
+    // * Labels
+
+    public String nextLabel() {
+        return "label_" + labelID++;
     }
 
     // * Utility methods
@@ -128,10 +143,22 @@ public class CodeGenerator implements AutoCloseable {
         this.writeLine("halt");
     }
 
+    public void jz(String label) {
+        this.writeLine("jz " + label);
+    }
+
+    public void jmp(String label) {
+        this.writeLine("jmp " + label);
+    }
+
     // Operations
 
     public void add() {
         this.writeLine("add"); // This method is only used with offsets
+    }
+
+    public void mul() {
+        this.writeLine("mul"); // This method is only used with indexing ops.
     }
 
     public void mod(Type type) {
@@ -152,8 +179,7 @@ public class CodeGenerator implements AutoCloseable {
             case "-" -> "sub";
             case "*" -> "mul";
             case "/" -> "div";
-            default ->
-                    throw new UnsupportedOperationException("Unknown operator: " + operator);
+            default -> throw new UnsupportedOperationException("Unknown operator: " + operator);
         } + type.suffix());
     }
 
@@ -165,8 +191,7 @@ public class CodeGenerator implements AutoCloseable {
             case "<=" -> "le";
             case "==" -> "eq";
             case "!=" -> "ne";
-            default ->
-                    throw new UnsupportedOperationException("Unknown operator: " + operator);
+            default -> throw new UnsupportedOperationException("Unknown operator: " + operator);
         } + type.suffix());
     }
 
@@ -174,8 +199,7 @@ public class CodeGenerator implements AutoCloseable {
         this.writeLine(switch (operator) {
             case "&&" -> "and";
             case "||" -> "or";
-            default ->
-                    throw new UnsupportedOperationException("Unknown operator: " + operator);
+            default -> throw new UnsupportedOperationException("Unknown operator: " + operator);
         });
     }
 

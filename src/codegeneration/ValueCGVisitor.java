@@ -1,5 +1,7 @@
 package codegeneration;
 
+import ast.expression.Expression;
+import ast.expression.Indexing;
 import ast.expression.Variable;
 import ast.expression.binary.ArithmeticExpression;
 import ast.expression.binary.ComparisonExpression;
@@ -9,6 +11,7 @@ import ast.expression.literal.CharLiteral;
 import ast.expression.literal.IntLiteral;
 import ast.expression.literal.RealLiteral;
 import ast.expression.unary.Cast;
+import ast.expression.unary.FieldAccess;
 import ast.expression.unary.Negation;
 import ast.expression.unary.UnaryMinus;
 import ast.type.Type;
@@ -114,14 +117,27 @@ value[[UnaryMinus: expression1 -> expression2]] =
     expression2.type.convertTo(expression1.type.getInstance())
     <sub> expression1.type.suffix()
 
+// This is the same as Variable
+value[[Indexing: expression -> expression1 expression2]] =
+    address[[expression]]
+    <load> expression.type.suffix()
+
+// This is the same as Variable
+value[[FieldAccess: expression -> expression1 ID]] =
+    address[[expression]]
+    <load> expression.type.suffix()
+
  */
 
 public class ValueCGVisitor extends AbstractCGVisitor<Void, Void> {
 
-    private final AddressCGVisitor addressCGVisitor = new AddressCGVisitor(this.cg);
-
     public ValueCGVisitor(CodeGenerator cg) {
         super(cg);
+    }
+
+    private void loadExpression(Expression expr) {
+        expr.accept(this.cg.addrVisitor, null);
+        this.cg.load(expr.getType());
     }
 
     @Override
@@ -144,8 +160,7 @@ public class ValueCGVisitor extends AbstractCGVisitor<Void, Void> {
 
     @Override
     public Void visit(Variable var, Void param) {
-        var.accept(this.addressCGVisitor, null);
-        this.cg.load(var.getDefinition().getType());
+        this.loadExpression(var);
         return null;
     }
 
@@ -216,6 +231,18 @@ public class ValueCGVisitor extends AbstractCGVisitor<Void, Void> {
         unaryMinus.getExpr().accept(this, null);
         unaryMinus.getExpr().getType().convertTo(unaryMinus.getType(), this.cg);
         this.cg.sub(unaryMinus.getType());
+        return null;
+    }
+
+    @Override
+    public Void visit(Indexing idx, Void param) {
+        this.loadExpression(idx);
+        return null;
+    }
+
+    @Override
+    public Void visit(FieldAccess fieldAccess, Void param) {
+        this.loadExpression(fieldAccess);
         return null;
     }
 }
