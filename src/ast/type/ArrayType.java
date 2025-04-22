@@ -6,19 +6,19 @@ import semantic.Visitor;
 
 public class ArrayType extends AbstractType {
 
-    private Type type;
     private final int size;
+    private Type type;
+
+    private ArrayType(Type type, int size) {
+        this.type = type;
+        this.size = size;
+    }
 
     public static ArrayType create(Type type, int size) {
         if (type instanceof ArrayType arrayType) {
             arrayType.type = new ArrayType(arrayType.type, size);
             return arrayType;
         } else return new ArrayType(type, size);
-    }
-
-    private ArrayType(Type type, int size) {
-        this.type = type;
-        this.size = size;
     }
 
     public Type getType() {
@@ -39,7 +39,7 @@ public class ArrayType extends AbstractType {
 
     @Override
     public String typeExpression() {
-        return "array[" + this.type.typeExpression() + "]";
+        return "[" + this.size + ", " + this.type.typeExpression() +"]";
     }
 
     @Override
