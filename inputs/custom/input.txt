@@ -1,0 +1,13 @@
+int recursionSum(int i, int end) {
+    if (i == end) {
+        return i;
+    } else {
+        return i + recursionSum(i + 1, end);
+    }
+}
+
+
+void main(){
+    write recursionSum(1, 10), '\n';
+}
+
