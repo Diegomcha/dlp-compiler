@@ -1,0 +1,34 @@
+// * Global Variables
+int x, y;
+double d;
+
+// * Function Definitions
+int square(int num) {
+    return num * num;
+}
+
+double sum(double a, double b) {
+    return a + b;
+}
+
+void printMessage() {
+    write 'H', 'e', 'l', 'l', 'o', ',', ' ', 'W', 'o', 'r', 'l', 'd', '!', '\n';
+}
+
+// * Main Function
+void main() {
+    int result;
+    double total;
+
+    x = 5;
+    y = 10;
+    d = 3.5;
+
+    result = square(x);
+    total = sum((double)y, d);
+
+    write 'x', '^', 2, ':', ' ', result, '\n';
+    write 'y', '+', 'd', ':', ' ', total, '\n';
+
+    printMessage();
+}

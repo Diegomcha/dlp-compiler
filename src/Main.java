@@ -21,31 +21,37 @@ public class Main {
             return;
         }
 
-        // create a lexer that feeds off of input CharStream
+        /// Lexical Analysis
+
         CharStream input = CharStreams.fromFileName(args[0]);
         CmmLexer lexer = new CmmLexer(input);
 
-        // create a parser that feeds off the tokens buffer
+        /// Syntactic Analysis
+
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         CmmParser parser = new CmmParser(tokens);
-
         Program ast = parser.program().ast;
 
-        // Run visitors
+        if (parser.getNumberOfSyntaxErrors() > 0)
+            return;
+
+        /// Semantic Analysis
         ast.accept(new IdentificationVisitor(), null);
         ast.accept(new TypeCheckingVisitor(), null);
 
-        // Run CG visitors
+        if (ErrorHandler.getInstance().anyError()) {
+            ErrorHandler.getInstance().showErrors(System.err);
+            return;
+        }
+
+        /// Code generation
         ast.accept(new OffsetVisitor(), null);
-        try(CodeGenerator cg = new CodeGenerator(args[0], args[1])) {
+        try (CodeGenerator cg = new CodeGenerator(args[0], args[1])) {
             ast.accept(new ExecuteCGVisitor(cg), null);
         }
 
-        if (ErrorHandler.getInstance().anyError())
-            ErrorHandler.getInstance().showErrors(System.err);
-        else {
-            IntrospectorModel model = new IntrospectorModel("Program", ast);
-            new IntrospectorView("Introspector", model);
-        }
+        // Introspector
+        IntrospectorModel model = new IntrospectorModel("Program", ast);
+        new IntrospectorView("Introspector", model);
     }
 }

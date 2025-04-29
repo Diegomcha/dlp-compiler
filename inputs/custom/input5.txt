@@ -1,0 +1,67 @@
+// * Global Variables
+int[3][3] matrixA, matrixB, matrixC;
+
+// * Functions
+void initializeMatrix(int base, int matrixIndex) {
+    int i, j;
+    i = 0;
+    while (i < 3) {
+        j = 0;
+        while (j < 3) {
+            if (matrixIndex == 1)
+                matrixA[i][j] = base + i + j;
+            else if (matrixIndex == 2)
+                matrixB[i][j] = base + i + j;
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+}
+
+void addMatrices() {
+    int i, j;
+    i = 0;
+    while (i < 3) {
+        j = 0;
+        while (j < 3) {
+            matrixC[i][j] = matrixA[i][j] + matrixB[i][j];
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+}
+
+void displayMatrix(int matrixIndex) {
+    int i, j;
+    i = 0;
+    while (i < 3) {
+        j = 0;
+        while (j < 3) {
+            if (matrixIndex == 1)
+                write matrixA[i][j], ' ';
+            else if (matrixIndex == 2)
+                write matrixB[i][j], ' ';
+            else
+                write matrixC[i][j], ' ';
+            j = j + 1;
+        }
+        write '\n';
+        i = i + 1;
+    }
+}
+
+// * Main Function
+void main() {
+    initializeMatrix(1, 1);
+    initializeMatrix(10, 2);
+    addMatrices();
+
+    write 'M', 'a', 't', 'r', 'i', 'x', ' ', 'A', ':', '\n';
+    displayMatrix(1);
+
+    write 'M', 'a', 't', 'r', 'i', 'x', ' ', 'B', ':', '\n';
+    displayMatrix(2);
+
+    write 'M', 'a', 't', 'r', 'i', 'x', ' ', 'C', ':', '\n';
+    displayMatrix(3);
+}

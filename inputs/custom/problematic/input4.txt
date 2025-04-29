@@ -1,0 +1,13 @@
+int fn() {
+    if (1)
+        return 1; // return in if body (warning)
+
+    while (1)
+        return 1; // return in while body (warning)
+    return 0;
+}
+
+void main(){
+    fn();
+}
+

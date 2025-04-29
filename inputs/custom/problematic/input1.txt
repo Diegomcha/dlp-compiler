@@ -1,0 +1,11 @@
+int fn() {
+    if (1)
+        return 1; // return in if body (warning)
+
+    // no return here, compiler shows no errors, MAPL does (error)
+}
+
+void main(){
+    fn();
+}
+

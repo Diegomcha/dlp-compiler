@@ -1,6 +1,9 @@
 int recursionSum(int i, int end) {
+    int a;
     if (i == end) {
         return i;
+        a = i;
+        write a, '\n';
     } else {
         return i + recursionSum(i + 1, end);
     }

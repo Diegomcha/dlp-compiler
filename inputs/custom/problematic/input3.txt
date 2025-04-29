@@ -1,0 +1,5 @@
+int[1] a;
+
+void main() {
+    write a[0]; // accessing uninitialized mem (warning)
+}

@@ -1,0 +1,28 @@
+// * Global Variables
+char[5] str;
+
+// * Function
+void reverseString() {
+    int i;
+    char temp;
+    i = 0;
+    while (i < 2) {
+        temp = str[i];
+        str[i] = str[4 - i];
+        str[4 - i] = temp;
+        i = i + 1;
+    }
+}
+
+// * Main Function
+void main() {
+    str[0] = 'h';
+    str[1] = 'e';
+    str[2] = 'l';
+    str[3] = 'l';
+    str[4] = 'o';
+
+    write 'O', 'r', 'i', 'g', 'i', 'n', 'a', 'l', ':', ' ', str[0], str[1], str[2], str[3], str[4], '\n';
+    reverseString();
+    write 'R', 'e', 'v', 'e', 'r', 's', 'e', 'd', ':', ' ', str[0], str[1], str[2], str[3], str[4], '\n';
+}

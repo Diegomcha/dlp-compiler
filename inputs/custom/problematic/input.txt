@@ -1,0 +1,22 @@
+int[1] arr;
+
+int fn() {
+   // * First problem
+   if (1)
+       return 1; // jmp is generated after ret (MAPL warning)
+   while (1)
+       return 1; // jmp is generated after ret (MAPL warning)
+
+   // * Missing features
+   if (1)
+       return 1;
+       write 'a'; // unreachable code (MAPL error)
+
+   write arr[0]; // accessing uninitialized variables (MAPL warning)
+
+   // missing return (MAPL error)
+}
+
+void main(){
+    fn();
+}

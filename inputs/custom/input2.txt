@@ -1,0 +1,47 @@
+// * Global Variables
+struct {
+    int id;
+    char grade;
+} student;
+
+int[3][3] matrix;
+
+// * Functions
+void initializeMatrix() {
+    int i, j;
+    i = 0;
+    while (i < 3) {
+        j = 0;
+        while (j < 3) {
+            matrix[i][j] = i + j;
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+}
+
+void displayMatrix() {
+    int i, j;
+    i = 0;
+    while (i < 3) {
+        j = 0;
+        while (j < 3) {
+            write matrix[i][j], ' ';
+            j = j + 1;
+        }
+        write '\n';
+        i = i + 1;
+    }
+}
+
+// * Main Function
+void main() {
+    student.id = 12345;
+    student.grade = 'A';
+
+    write 'S', 't', 'u', 'd', 'e', 'n', 't', ' ', 'I', 'D', ':', ' ', student.id, '\n';
+    write 'G', 'r', 'a', 'd', 'e', ':', ' ', student.grade, '\n';
+
+    displayMatrix();
+    initializeMatrix();
+}

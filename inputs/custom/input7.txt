@@ -1,0 +1,26 @@
+// * Global Variables
+double[3] values;
+double averageValue;
+
+// * Function
+void computeAverage() {
+    double total;
+    int i;
+    total = 0.0;
+    i = 0;
+    while (i < 3) {
+        total = total + values[i];
+        i = i + 1;
+    }
+    averageValue = total / 3.0;
+}
+
+// * Main Function
+void main() {
+    values[0] = 1.5;
+    values[1] = 2.5;
+    values[2] = 3.5;
+
+    computeAverage();
+    write 'A', 'v', 'e', 'r', 'a', 'g', 'e', ':', ' ', averageValue, '\n';
+}
