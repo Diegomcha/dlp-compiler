@@ -1,5 +1,6 @@
 package codegeneration;
 
+import ast.FuncInvocation;
 import ast.Program;
 import ast.definition.FunctionDefinition;
 import ast.definition.VariableDefinition;
@@ -7,10 +8,14 @@ import ast.statement.Assignment;
 import ast.statement.conditional.Conditional;
 import ast.statement.conditional.While;
 import ast.statement.unary.Read;
+import ast.statement.unary.Return;
 import ast.statement.unary.Write;
+import ast.type.FunctionType;
+import ast.type.Type;
 import ast.type.builtin.VoidType;
 import codegeneration.util.AbstractCGVisitor;
 import codegeneration.util.CodeGenerator;
+import codegeneration.util.ExecuteParams;
 
 /*
 CODE TEMPLATES: execute
@@ -33,15 +38,18 @@ execute[[VariableDefinition: definition -> type ID]] =
     <' * > definition.type.typeExpression() < > ID < (offset> definition.offset <)>
 
 execute[[FunctionDefinition: definition -> ID fnType vardefinition* statement*]] =
+    int localByteSum = vardefinition*.map(def -> def.type.numberOfBytes()).sum();
+    int paramByteSum = fnType.params.map(def -> def.type.numberOfBytes()).sum();
+
     ID <:>
     <' * Parameters>
     fnType.params.forEach(def -> execute[[def]])
     <' * Local variables>
     vardefinition*.forEach(def -> execute[[def]])
-    <enter > vardefinition*.map(def -> def.type.numberOfBytes()).sum()
-    statement*.forEach(st -> execute[[st]])
+    <enter > localBytesSum
+    statement*.forEach(st -> execute[[st]](localByteSum, paramByteSum))
     if (fnType.returnType == VoidType.getInstance())
-        <ret 0, > vardefinition*.map(def -> def.type.numberOfBytes()).sum() <, > fnType.params.map(def -> def.type.numberOfBytes()).sum()
+        <ret 0, > localByteSum <, > paramByteSum
 
 execute[[Program: program -> definition*]] =
     <' * Global variables>
@@ -73,17 +81,27 @@ execute[[Conditional: statement -> expression statementB* statementE*]] =
     statementE*.forEach(st -> execute[[st]]);
     exitLabel <:>
 
+execute[[FuncInvocation: statement -> expression expression*]] =
+    expression*.forEach(exp -> value[[exp]])
+    <call > expression.name
+    if (expression.type.returnType != VoidType.getInstance())
+        <pop> expression.type.returnType.suffix()
+
+execute[[Return statement -> expression]](int localByteSum, int paramByteSum) =
+    value[[expression]]
+    <ret > expression.type.numberOfBytes() <, > localByteSum <, > paramByteSum
+
  */
 
 
-public class ExecuteCGVisitor extends AbstractCGVisitor<Void, Void> {
+public class ExecuteCGVisitor extends AbstractCGVisitor<ExecuteParams, Void> {
 
     public ExecuteCGVisitor(CodeGenerator cg) {
         super(cg);
     }
 
     @Override
-    public Void visit(Read read, Void param) {
+    public Void visit(Read read, ExecuteParams param) {
         this.cg.pragmaLine(read.getLine());
         this.cg.comment("- Read:");
 
@@ -94,7 +112,7 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<Void, Void> {
     }
 
     @Override
-    public Void visit(Write write, Void param) {
+    public Void visit(Write write, ExecuteParams param) {
         this.cg.pragmaLine(write.getLine());
         this.cg.comment("- Write:");
 
@@ -104,7 +122,7 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<Void, Void> {
     }
 
     @Override
-    public Void visit(Assignment assignment, Void param) {
+    public Void visit(Assignment assignment, ExecuteParams param) {
         this.cg.pragmaLine(assignment.getLine());
         this.cg.comment("- Assignment:");
 
@@ -115,13 +133,13 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<Void, Void> {
     }
 
     @Override
-    public Void visit(VariableDefinition varDef, Void param) {
+    public Void visit(VariableDefinition varDef, ExecuteParams param) {
         this.cg.comment(String.format("* %s %s (offset %d)", varDef.getType().typeExpression(), varDef.getName(), varDef.getOffset()));
         return null;
     }
 
     @Override
-    public Void visit(FunctionDefinition fnDef, Void param) {
+    public Void visit(FunctionDefinition fnDef, ExecuteParams param) {
         int paramByteSum = fnDef.getType().getParams().stream()
                 .mapToInt(def -> def.getType().numberOfBytes())
                 .sum();
@@ -140,8 +158,8 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<Void, Void> {
         this.cg.enter(localByteSum);
         this.cg.newLine();
 
-        fnDef.getStmts().forEach(def -> {
-            def.accept(this, null);
+        fnDef.getStmts().forEach(st -> {
+            st.accept(this, new ExecuteParams(localByteSum, paramByteSum));
             this.cg.newLine();
         });
 
@@ -154,7 +172,7 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<Void, Void> {
     }
 
     @Override
-    public Void visit(Program program, Void param) {
+    public Void visit(Program program, ExecuteParams param) {
         this.cg.comment("* Global variables:");
         program.getSentences().stream().filter(s -> s instanceof VariableDefinition).forEach(s -> s.accept(this, null));
         this.cg.newLine();
@@ -172,7 +190,7 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<Void, Void> {
     }
 
     @Override
-    public Void visit(While whl, Void param) {
+    public Void visit(While whl, ExecuteParams param) {
         this.cg.pragmaLine(whl.getLine());
         this.cg.comment("- While:");
 
@@ -188,7 +206,7 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<Void, Void> {
         // Body
         this.cg.incrementIndent();
         whl.getBody().forEach(st -> {
-            st.accept(this, null);
+            st.accept(this, param);
             this.cg.newLine();
         });
         this.cg.jmp(condLabel);
@@ -201,7 +219,7 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<Void, Void> {
     }
 
     @Override
-    public Void visit(Conditional conditional, Void param) {
+    public Void visit(Conditional conditional, ExecuteParams param) {
         String elseLabel = this.cg.nextLabel();
         String exitLabel = this.cg.nextLabel();
 
@@ -216,7 +234,7 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<Void, Void> {
         // Body
         this.cg.incrementIndent();
         conditional.getBody().forEach(st -> {
-            st.accept(this, null);
+            st.accept(this, param);
             this.cg.newLine();
         });
         this.cg.jmp(exitLabel);
@@ -227,12 +245,37 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<Void, Void> {
         this.cg.label(elseLabel);
         this.cg.incrementIndent();
         conditional.getElseBody().forEach(st -> {
-            st.accept(this, null);
+            st.accept(this, param);
             this.cg.newLine();
         });
         this.cg.decrementIndent();
         this.cg.label(exitLabel);
 
+        return null;
+    }
+
+    @Override
+    public Void visit(FuncInvocation invocation, ExecuteParams param) {
+        this.cg.pragmaLine(invocation.getLine());
+        this.cg.comment("- Invocation:");
+
+        invocation.getArgs().forEach(arg -> arg.accept(this.cg.valVisitor, null));
+        this.cg.call(invocation.getFn().getName());
+
+        Type returnType = ((FunctionType) invocation.getFn().getType()).getReturnType();
+        if (returnType != VoidType.getInstance())
+            this.cg.pop(returnType);
+
+        return null;
+    }
+
+    @Override
+    public Void visit(Return ret, ExecuteParams param) {
+        this.cg.pragmaLine(ret.getLine());
+        this.cg.comment("- Return:");
+
+        ret.getExpr().accept(this.cg.valVisitor, null);
+        this.cg.ret(ret.getExpr().getType().numberOfBytes(), param.localByteSum(), param.paramByteSum());
         return null;
     }
 }

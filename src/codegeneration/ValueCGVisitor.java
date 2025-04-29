@@ -1,5 +1,6 @@
 package codegeneration;
 
+import ast.FuncInvocation;
 import ast.expression.Expression;
 import ast.expression.Indexing;
 import ast.expression.Variable;
@@ -127,6 +128,10 @@ value[[FieldAccess: expression -> expression1 ID]] =
     address[[expression]]
     <load> expression.type.suffix()
 
+value[[FuncInvocation: expression1 -> expression2 expression*]] =
+    expression*.forEach(exp -> value[[exp]])
+    <call > expression2.name
+
  */
 
 public class ValueCGVisitor extends AbstractCGVisitor<Void, Void> {
@@ -243,6 +248,13 @@ public class ValueCGVisitor extends AbstractCGVisitor<Void, Void> {
     @Override
     public Void visit(FieldAccess fieldAccess, Void param) {
         this.loadExpression(fieldAccess);
+        return null;
+    }
+
+    @Override
+    public Void visit(FuncInvocation invocation, Void param) {
+        invocation.getArgs().forEach(arg -> arg.accept(this, null));
+        this.cg.call(invocation.getFn().getName());
         return null;
     }
 }

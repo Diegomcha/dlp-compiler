@@ -111,6 +111,10 @@ public class CodeGenerator implements AutoCloseable {
         this.writeLine("pusha bp");
     }
 
+    public void pop(Type type) {
+        this.writeLine("pop" + type.suffix());
+    }
+
     // Mem ops
 
     public void store(Type type) {
