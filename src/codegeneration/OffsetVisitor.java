@@ -50,7 +50,7 @@ import ast.type.struct.StructField;
 import ast.type.struct.StructType;
 import semantic.AbstractTraversal;
 
-public class OffsetVisitor extends AbstractTraversal {
+public class OffsetVisitor extends AbstractTraversal<Void, Void> {
 
     private int globalBytesSum = 0;
 

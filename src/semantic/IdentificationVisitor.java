@@ -7,7 +7,7 @@ import ast.expression.Variable;
 import ast.type.ErrorType;
 import symboltable.SymbolTable;
 
-public class IdentificationVisitor extends AbstractTraversal {
+public class IdentificationVisitor extends AbstractTraversal<Void, Void> {
 
     private final SymbolTable symbolTable = new SymbolTable();
 

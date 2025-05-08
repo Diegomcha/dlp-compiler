@@ -1,9 +1,10 @@
 package ast.statement.unary;
 
 import ast.expression.Expression;
-import ast.statement.AbstractStatement;
+import ast.node.AbstractLocatable;
+import ast.statement.Statement;
 
-public abstract class UnaryStatement extends AbstractStatement {
+public abstract class UnaryStatement extends AbstractLocatable implements Statement {
 
     private final Expression expr;
 

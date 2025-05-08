@@ -4,7 +4,6 @@ import ast.expression.AbstractExpression;
 import ast.expression.Expression;
 import ast.expression.Variable;
 import ast.statement.Statement;
-import ast.type.Type;
 import semantic.Visitor;
 
 import java.util.ArrayList;
@@ -15,8 +14,6 @@ public class FuncInvocation extends AbstractExpression implements Statement {
 
     private final Variable fn;
     private final List<Expression> args;
-
-    private Type returnType;
 
     public FuncInvocation(int line, int col, Variable fn, List<Expression> args) {
         super(line, col);
@@ -33,22 +30,11 @@ public class FuncInvocation extends AbstractExpression implements Statement {
     }
 
     @Override
-    public Type getReturnType() {
-        return returnType;
-    }
-
-    @Override
-    public void setReturnType(Type returnType) {
-        this.returnType = returnType;
-    }
-
-    @Override
     public String toString() {
         return "FuncInvocation{" +
                 super.toString() +
                 ", fn=" + fn +
                 ", args=" + args.size() +
-                ", returnType=" + returnType +
                 '}';
     }
 

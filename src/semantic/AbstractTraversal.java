@@ -13,202 +13,202 @@ import ast.type.builtin.*;
 import ast.type.struct.*;
 import ast.definition.*;
 
-public abstract class AbstractTraversal implements Visitor<Void, Void> {
+public abstract class AbstractTraversal<TP, TR> implements Visitor<TP, TR> {
 
     @Override
-    public Void visit(Program program, Void param) {
-        program.getSentences().forEach(s -> s.accept(this, null));
+    public TR visit(Program program, TP param) {
+        program.getSentences().forEach(s -> s.accept(this, param));
         return null;
     }
 
     @Override
-    public Void visit(FuncInvocation invocation, Void param) {
+    public TR visit(FuncInvocation invocation, TP param) {
         invocation.getFn().accept(this, null);
-        invocation.getArgs().forEach(a -> a.accept(this, null));
+        invocation.getArgs().forEach(a -> a.accept(this, param));
         return null;
     }
 
     @Override
-    public Void visit(FunctionType fnType, Void param) {
-        fnType.getParams().forEach(p -> p.accept(this, null));
-        fnType.getReturnType().accept(this, null);
+    public TR visit(FunctionType fnType, TP param) {
+        fnType.getParams().forEach(p -> p.accept(this, param));
+        fnType.getReturnType().accept(this, param);
         return null;
     }
 
     @Override
-    public Void visit(ErrorType errType, Void param) {
+    public TR visit(ErrorType errType, TP param) {
         return null;
     }
 
     @Override
-    public Void visit(ArrayType arrType, Void param) {
-        arrType.getType().accept(this, null);
+    public TR visit(ArrayType arrType, TP param) {
+        arrType.getType().accept(this, param);
         return null;
     }
 
     @Override
-    public Void visit(CharType chType, Void param) {
+    public TR visit(CharType chType, TP param) {
         return null;
     }
 
     @Override
-    public Void visit(IntType intType, Void param) {
+    public TR visit(IntType intType, TP param) {
         return null;
     }
 
     @Override
-    public Void visit(RealType realType, Void param) {
+    public TR visit(RealType realType, TP param) {
         return null;
     }
 
     @Override
-    public Void visit(VoidType voidType, Void param) {
+    public TR visit(VoidType voidType, TP param) {
         return null;
     }
 
     @Override
-    public Void visit(StructField structField, Void param) {
-        structField.getType().accept(this, null);
+    public TR visit(StructField structField, TP param) {
+        structField.getType().accept(this, param);
         return null;
     }
 
     @Override
-    public Void visit(StructType structType, Void param) {
-        structType.getFields().forEach(f -> f.accept(this, null));
+    public TR visit(StructType structType, TP param) {
+        structType.getFields().forEach(f -> f.accept(this, param));
         return null;
     }
 
     @Override
-    public Void visit(Assignment assignment, Void param) {
-        assignment.getAssigned().accept(this, null);
-        assignment.getValue().accept(this, null);
+    public TR visit(Assignment assignment, TP param) {
+        assignment.getAssigned().accept(this, param);
+        assignment.getValue().accept(this, param);
         return null;
     }
 
     @Override
-    public Void visit(Conditional conditional, Void param) {
-        conditional.getCondition().accept(this, null);
-        conditional.getBody().forEach(s -> s.accept(this, null));
-        conditional.getElseBody().forEach(s -> s.accept(this, null));
+    public TR visit(Conditional conditional, TP param) {
+        conditional.getCondition().accept(this, param);
+        conditional.getBody().forEach(s -> s.accept(this, param));
+        conditional.getElseBody().forEach(s -> s.accept(this, param));
         return null;
     }
 
     @Override
-    public Void visit(While whl, Void param) {
-        whl.getCondition().accept(this, null);
-        whl.getBody().forEach(s -> s.accept(this, null));
+    public TR visit(While whl, TP param) {
+        whl.getCondition().accept(this, param);
+        whl.getBody().forEach(s -> s.accept(this, param));
         return null;
     }
 
     @Override
-    public Void visit(Read read, Void param) {
-        read.getExpr().accept(this, null);
+    public TR visit(Read read, TP param) {
+        read.getExpr().accept(this, param);
         return null;
     }
 
     @Override
-    public Void visit(Write write, Void param) {
-        write.getExpr().accept(this, null);
+    public TR visit(Write write, TP param) {
+        write.getExpr().accept(this, param);
         return null;
     }
 
     @Override
-    public Void visit(Return ret, Void param) {
-        ret.getExpr().accept(this, null);
+    public TR visit(Return ret, TP param) {
+        ret.getExpr().accept(this, param);
         return null;
     }
 
     @Override
-    public Void visit(Variable var, Void param) {
+    public TR visit(Variable var, TP param) {
         return null;
     }
 
     @Override
-    public Void visit(Indexing idx, Void param) {
-        idx.getElement().accept(this, null);
-        idx.getIndex().accept(this, null);
+    public TR visit(Indexing idx, TP param) {
+        idx.getElement().accept(this, param);
+        idx.getIndex().accept(this, param);
         return null;
     }
 
     @Override
-    public Void visit(ArithmeticExpression arithmetic, Void param) {
-        arithmetic.getOp1().accept(this, null);
-        arithmetic.getOp2().accept(this, null);
+    public TR visit(ArithmeticExpression arithmetic, TP param) {
+        arithmetic.getOp1().accept(this, param);
+        arithmetic.getOp2().accept(this, param);
         return null;
     }
 
     @Override
-    public Void visit(ComparisonExpression comparison, Void param) {
-        comparison.getOp1().accept(this, null);
-        comparison.getOp2().accept(this, null);
+    public TR visit(ComparisonExpression comparison, TP param) {
+        comparison.getOp1().accept(this, param);
+        comparison.getOp2().accept(this, param);
         return null;
     }
 
     @Override
-    public Void visit(LogicalExpression logical, Void param) {
-        logical.getOp1().accept(this, null);
-        logical.getOp2().accept(this, null);
+    public TR visit(LogicalExpression logical, TP param) {
+        logical.getOp1().accept(this, param);
+        logical.getOp2().accept(this, param);
         return null;
     }
 
     @Override
-    public Void visit(ReminderExpression reminder, Void param) {
-        reminder.getOp1().accept(this, null);
-        reminder.getOp2().accept(this, null);
+    public TR visit(ReminderExpression reminder, TP param) {
+        reminder.getOp1().accept(this, param);
+        reminder.getOp2().accept(this, param);
         return null;
     }
 
     @Override
-    public Void visit(CharLiteral charLiteral, Void param) {
+    public TR visit(CharLiteral charLiteral, TP param) {
         return null;
     }
 
     @Override
-    public Void visit(IntLiteral intLiteral, Void param) {
+    public TR visit(IntLiteral intLiteral, TP param) {
         return null;
     }
 
     @Override
-    public Void visit(RealLiteral realLiteral, Void param) {
+    public TR visit(RealLiteral realLiteral, TP param) {
         return null;
     }
 
     @Override
-    public Void visit(Cast cast, Void param) {
-        cast.getType().accept(this, null);
-        cast.getExpr().accept(this, null);
+    public TR visit(Cast cast, TP param) {
+        cast.getType().accept(this, param);
+        cast.getExpr().accept(this, param);
         return null;
     }
 
     @Override
-    public Void visit(FieldAccess fieldAccess, Void param) {
-        fieldAccess.getExpr().accept(this, null);
+    public TR visit(FieldAccess fieldAccess, TP param) {
+        fieldAccess.getExpr().accept(this, param);
         return null;
     }
 
     @Override
-    public Void visit(Negation negation, Void param) {
-        negation.getExpr().accept(this, null);
+    public TR visit(Negation negation, TP param) {
+        negation.getExpr().accept(this, param);
         return null;
     }
 
     @Override
-    public Void visit(UnaryMinus unaryMinus, Void param) {
-        unaryMinus.getExpr().accept(this, null);
+    public TR visit(UnaryMinus unaryMinus, TP param) {
+        unaryMinus.getExpr().accept(this, param);
         return null;
     }
 
     @Override
-    public Void visit(FunctionDefinition fnDef, Void param) {
-        fnDef.getType().accept(this, null);
-        fnDef.getDefs().forEach(p -> p.accept(this, null));
-        fnDef.getStmts().forEach(s -> s.accept(this, null));
+    public TR visit(FunctionDefinition fnDef, TP param) {
+        fnDef.getType().accept(this, param);
+        fnDef.getDefs().forEach(p -> p.accept(this, param));
+        fnDef.getStmts().forEach(s -> s.accept(this, param));
         return null;
     }
 
     @Override
-    public Void visit(VariableDefinition varDef, Void param) {
-        varDef.getType().accept(this, null);
+    public TR visit(VariableDefinition varDef, TP param) {
+        varDef.getType().accept(this, param);
         return null;
     }
 }

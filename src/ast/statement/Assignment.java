@@ -1,9 +1,10 @@
 package ast.statement;
 
 import ast.expression.Expression;
+import ast.node.AbstractLocatable;
 import semantic.Visitor;
 
-public class Assignment extends AbstractStatement {
+public class Assignment extends AbstractLocatable implements Statement {
 
     private final Expression assigned;
     private final Expression value;

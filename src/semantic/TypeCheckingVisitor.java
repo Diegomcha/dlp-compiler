@@ -23,6 +23,7 @@ import ast.statement.unary.Read;
 import ast.statement.unary.Return;
 import ast.statement.unary.Write;
 import ast.type.ErrorType;
+import ast.type.Type;
 import ast.type.builtin.CharType;
 import ast.type.builtin.IntType;
 import ast.type.builtin.RealType;
@@ -163,11 +164,11 @@ R:
 
 */
 
-public class TypeCheckingVisitor extends AbstractTraversal {
+public class TypeCheckingVisitor extends AbstractTraversal<Type, Void> {
 
     @Override
-    public Void visit(FuncInvocation invocation, Void param) {
-        super.visit(invocation, param);
+    public Void visit(FuncInvocation invocation, Type returnType) {
+        super.visit(invocation, returnType);
 
         invocation.setLValue(false);
         invocation.setType(invocation.getFn().getType().parenthesis(invocation.getArgs().stream().map(Expression::getType).toList(), invocation));
@@ -176,8 +177,8 @@ public class TypeCheckingVisitor extends AbstractTraversal {
     }
 
     @Override
-    public Void visit(Assignment assignment, Void param) {
-        super.visit(assignment, param);
+    public Void visit(Assignment assignment, Type returnType) {
+        super.visit(assignment, returnType);
 
         // L-value expected error
         if (!assignment.getAssigned().getLValue())
@@ -189,8 +190,8 @@ public class TypeCheckingVisitor extends AbstractTraversal {
     }
 
     @Override
-    public Void visit(Read read, Void param) {
-        super.visit(read, param);
+    public Void visit(Read read, Type returnType) {
+        super.visit(read, returnType);
 
         // L-value expected error
         if (!read.getExpr().getLValue())
@@ -202,8 +203,8 @@ public class TypeCheckingVisitor extends AbstractTraversal {
     }
 
     @Override
-    public Void visit(Variable var, Void param) {
-        super.visit(var, param);
+    public Void visit(Variable var, Type returnType) {
+        super.visit(var, returnType);
 
         var.setLValue(true);
         if (var.getDefinition() != null)
@@ -214,8 +215,8 @@ public class TypeCheckingVisitor extends AbstractTraversal {
     }
 
     @Override
-    public Void visit(Indexing idx, Void param) {
-        super.visit(idx, param);
+    public Void visit(Indexing idx, Type returnType) {
+        super.visit(idx, returnType);
 
         idx.setLValue(true);
         idx.setType(idx.getElement().getType().squareBrackets(idx.getIndex().getType(), idx));
@@ -224,8 +225,8 @@ public class TypeCheckingVisitor extends AbstractTraversal {
     }
 
     @Override
-    public Void visit(ArithmeticExpression arithmetic, Void param) {
-        super.visit(arithmetic, param);
+    public Void visit(ArithmeticExpression arithmetic, Type returnType) {
+        super.visit(arithmetic, returnType);
 
         arithmetic.setLValue(false);
         arithmetic.setType(arithmetic.getOp1().getType().arithmetic(arithmetic.getOp2().getType(), arithmetic));
@@ -234,8 +235,8 @@ public class TypeCheckingVisitor extends AbstractTraversal {
     }
 
     @Override
-    public Void visit(ComparisonExpression comparison, Void param) {
-        super.visit(comparison, param);
+    public Void visit(ComparisonExpression comparison, Type returnType) {
+        super.visit(comparison, returnType);
 
         comparison.setLValue(false);
         comparison.setType(comparison.getOp1().getType().compare(comparison.getOp2().getType(), comparison));
@@ -244,8 +245,8 @@ public class TypeCheckingVisitor extends AbstractTraversal {
     }
 
     @Override
-    public Void visit(LogicalExpression logical, Void param) {
-        super.visit(logical, param);
+    public Void visit(LogicalExpression logical, Type returnType) {
+        super.visit(logical, returnType);
 
         logical.setLValue(false);
         logical.setType(logical.getOp1().getType().logicCompare(logical.getOp2().getType(), logical));
@@ -254,8 +255,8 @@ public class TypeCheckingVisitor extends AbstractTraversal {
     }
 
     @Override
-    public Void visit(ReminderExpression reminder, Void param) {
-        super.visit(reminder, param);
+    public Void visit(ReminderExpression reminder, Type returnType) {
+        super.visit(reminder, returnType);
 
         reminder.setLValue(false);
         reminder.setType(reminder.getOp1().getType().percentage(reminder.getOp2().getType(), reminder));
@@ -264,8 +265,8 @@ public class TypeCheckingVisitor extends AbstractTraversal {
     }
 
     @Override
-    public Void visit(CharLiteral charLiteral, Void param) {
-        super.visit(charLiteral, param);
+    public Void visit(CharLiteral charLiteral, Type returnType) {
+        super.visit(charLiteral, returnType);
 
         charLiteral.setLValue(false);
         charLiteral.setType(CharType.getInstance());
@@ -274,8 +275,8 @@ public class TypeCheckingVisitor extends AbstractTraversal {
     }
 
     @Override
-    public Void visit(IntLiteral intLiteral, Void param) {
-        super.visit(intLiteral, param);
+    public Void visit(IntLiteral intLiteral, Type returnType) {
+        super.visit(intLiteral, returnType);
 
         intLiteral.setLValue(false);
         intLiteral.setType(IntType.getInstance());
@@ -284,8 +285,8 @@ public class TypeCheckingVisitor extends AbstractTraversal {
     }
 
     @Override
-    public Void visit(RealLiteral realLiteral, Void param) {
-        super.visit(realLiteral, param);
+    public Void visit(RealLiteral realLiteral, Type returnType) {
+        super.visit(realLiteral, returnType);
 
         realLiteral.setLValue(false);
         realLiteral.setType(RealType.getInstance());
@@ -294,8 +295,8 @@ public class TypeCheckingVisitor extends AbstractTraversal {
     }
 
     @Override
-    public Void visit(Cast cast, Void param) {
-        super.visit(cast, param);
+    public Void visit(Cast cast, Type returnType) {
+        super.visit(cast, returnType);
 
         cast.setLValue(false);
         cast.setType(cast.getExpr().getType().cast(cast.getType(), cast));
@@ -304,8 +305,8 @@ public class TypeCheckingVisitor extends AbstractTraversal {
     }
 
     @Override
-    public Void visit(FieldAccess fieldAccess, Void param) {
-        super.visit(fieldAccess, param);
+    public Void visit(FieldAccess fieldAccess, Type returnType) {
+        super.visit(fieldAccess, returnType);
 
         fieldAccess.setLValue(true);
         fieldAccess.setType(fieldAccess.getExpr().getType().dot(fieldAccess.getProperty(), fieldAccess));
@@ -314,8 +315,8 @@ public class TypeCheckingVisitor extends AbstractTraversal {
     }
 
     @Override
-    public Void visit(Negation negation, Void param) {
-        super.visit(negation, param);
+    public Void visit(Negation negation, Type returnType) {
+        super.visit(negation, returnType);
 
         negation.setLValue(false);
         negation.setType(negation.getExpr().getType().exclamation(negation));
@@ -324,8 +325,8 @@ public class TypeCheckingVisitor extends AbstractTraversal {
     }
 
     @Override
-    public Void visit(UnaryMinus unaryMinus, Void param) {
-        super.visit(unaryMinus, param);
+    public Void visit(UnaryMinus unaryMinus, Type returnType) {
+        super.visit(unaryMinus, returnType);
 
         unaryMinus.setLValue(false);
         unaryMinus.setType(unaryMinus.getExpr().getType().minus(unaryMinus));
@@ -334,11 +335,9 @@ public class TypeCheckingVisitor extends AbstractTraversal {
     }
 
     @Override
-    public Void visit(While whl, Void param) {
-        // Inherited attribute...
-        whl.getBody().forEach(st -> st.setReturnType(whl.getReturnType()));
-
-        super.visit(whl, param);
+    public Void visit(While whl, Type returnType) {
+        // Pass the return type to the body
+        super.visit(whl, returnType);
 
         whl.getCondition().getType().mustBeCondition(whl);
 
@@ -346,12 +345,9 @@ public class TypeCheckingVisitor extends AbstractTraversal {
     }
 
     @Override
-    public Void visit(Conditional cond, Void param) {
-        // Inherited attribute...
-        cond.getBody().forEach(st -> st.setReturnType(cond.getReturnType()));
-        cond.getElseBody().forEach(st -> st.setReturnType(cond.getReturnType()));
-
-        super.visit(cond, param);
+    public Void visit(Conditional cond, Type returnType) {
+        // Pass the return type to the bodies
+        super.visit(cond, returnType);
 
         cond.getCondition().getType().mustBeCondition(cond);
 
@@ -359,17 +355,18 @@ public class TypeCheckingVisitor extends AbstractTraversal {
     }
 
     @Override
-    public Void visit(Return ret, Void param) {
-        super.visit(ret, param);
+    public Void visit(Return ret, Type returnType) {
+        super.visit(ret, returnType);
 
-        ret.getExpr().getType().ret(ret.getReturnType(), ret);
+        // Check return type matches
+        ret.getExpr().getType().ret(returnType, ret);
 
         return null;
     }
 
     @Override
-    public Void visit(Write write, Void param) {
-        super.visit(write, param);
+    public Void visit(Write write, Type returnType) {
+        super.visit(write, returnType);
 
         write.getExpr().getType().mustBeWritable(write);
 
@@ -377,10 +374,8 @@ public class TypeCheckingVisitor extends AbstractTraversal {
     }
 
     @Override
-    public Void visit(FunctionDefinition fnDef, Void param) {
-        // Inherited attributes...
-        fnDef.getStmts().forEach(st -> st.setReturnType(fnDef.getType().getReturnType()));
-
-        return super.visit(fnDef, param);
+    public Void visit(FunctionDefinition fnDef, Type returnType) {
+        // Passing returnType
+        return super.visit(fnDef, fnDef.getType().getReturnType());
     }
 }
