@@ -47,7 +47,7 @@ execute[[FunctionDefinition: definition -> ID fnType vardefinition* statement*]]
     <' * Local variables>
     vardefinition*.forEach(def -> execute[[def]])
     <enter > localBytesSum
-    statement*.forEach(st -> execute[[st]](localByteSum, paramByteSum))
+    statement*.forEach(st -> execute[[st]](fnType.returnType, localByteSum, paramByteSum))
     if (fnType.returnType == VoidType.getInstance())
         <ret 0, > localByteSum <, > paramByteSum
 
@@ -87,9 +87,9 @@ execute[[FuncInvocation: statement -> expression expression*]] =
     if (expression.type.returnType != VoidType.getInstance())
         <pop> expression.type.returnType.suffix()
 
-execute[[Return statement -> expression]](int localByteSum, int paramByteSum) =
+execute[[Return statement -> expression]](Type returnType, int localByteSum, int paramByteSum) =
     value[[expression]]
-    <ret > expression.type.numberOfBytes() <, > localByteSum <, > paramByteSum
+    <ret > returnType.numberOfBytes() <, > localByteSum <, > paramByteSum
 
  */
 
@@ -159,7 +159,7 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<ExecuteParams, Void> {
         this.cg.newLine();
 
         fnDef.getStmts().forEach(st -> {
-            st.accept(this, new ExecuteParams(localByteSum, paramByteSum));
+            st.accept(this, new ExecuteParams(fnDef.getType().getReturnType(), localByteSum, paramByteSum));
             this.cg.newLine();
         });
 
@@ -275,7 +275,7 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<ExecuteParams, Void> {
         this.cg.comment("- Return:");
 
         ret.getExpr().accept(this.cg.valVisitor, null);
-        this.cg.ret(ret.getExpr().getType().numberOfBytes(), param.localByteSum(), param.paramByteSum());
+        this.cg.ret(param.returnType().numberOfBytes(), param.localByteSum(), param.paramByteSum());
         return null;
     }
 }

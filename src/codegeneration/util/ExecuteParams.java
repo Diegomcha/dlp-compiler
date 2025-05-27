@@ -1,4 +1,6 @@
 package codegeneration.util;
 
-public record ExecuteParams(int localByteSum, int paramByteSum) {
+import ast.type.Type;
+
+public record ExecuteParams(Type returnType, int localByteSum, int paramByteSum) {
 }
