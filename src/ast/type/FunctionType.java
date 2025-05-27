@@ -72,8 +72,8 @@ public class FunctionType extends AbstractType {
         for (int i = 0; i < params.size(); i++) {
             Type expected = params.get(i).getType();
             Type got = argTypes.get(i);
-            if (expected != got) // Compare references since we are using singletons for built-in types
-                return new ErrorType(location, String.format("Invalid parameter type: expected '%s', got '%s'", expected.typeExpression(), got.typeExpression()));
+            if (!got.isPromotableTo(expected))
+                return new ErrorType(location, String.format("Invalid parameter type: expected '%s' or promotable, got '%s'", expected.typeExpression(), got.typeExpression()));
         }
 
         return this.returnType;

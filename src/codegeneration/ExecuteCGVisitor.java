@@ -32,6 +32,7 @@ execute[[Write: statement -> expression]] =
 execute[[Assignment: statement -> expression1 expression2]] =
     address[[expression1]]
     value[[expression2]]
+    expression2.type.convertTo(expression1.type)
     <store> expression1.type.suffix()
 
 execute[[VariableDefinition: definition -> type ID]] =
@@ -89,8 +90,8 @@ execute[[FuncInvocation: statement -> expression expression*]] =
 
 execute[[Return statement -> expression]](Type returnType, int localByteSum, int paramByteSum) =
     value[[expression]]
+    expression.type.convertTo(returnType)
     <ret > returnType.numberOfBytes() <, > localByteSum <, > paramByteSum
-
  */
 
 
@@ -128,6 +129,7 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<ExecuteParams, Void> {
 
         assignment.getAssigned().accept(this.cg.addrVisitor, null);
         assignment.getValue().accept(this.cg.valVisitor, null);
+        assignment.getValue().getType().convertTo(assignment.getAssigned().getType(), this.cg);
         this.cg.store(assignment.getAssigned().getType());
         return null;
     }
@@ -275,6 +277,7 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<ExecuteParams, Void> {
         this.cg.comment("- Return:");
 
         ret.getExpr().accept(this.cg.valVisitor, null);
+        ret.getExpr().getType().convertTo(param.returnType(), this.cg);
         this.cg.ret(param.returnType().numberOfBytes(), param.localByteSum(), param.paramByteSum());
         return null;
     }

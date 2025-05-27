@@ -34,8 +34,8 @@ public class IntType extends AbstractType {
 
     @Override
     public Type arithmetic(Type type, Locatable location) {
-        if (type instanceof IntType)
-            return this;
+        if (type instanceof CharType || type instanceof IntType || type instanceof RealType)
+            return this.supertype(type);
 
         return super.arithmetic(type, location);
     }
@@ -63,7 +63,7 @@ public class IntType extends AbstractType {
 
     @Override
     public Type compare(Type type, Locatable location) {
-        if (type instanceof IntType)
+        if (type instanceof CharType || type instanceof IntType || type instanceof RealType)
             return this;
 
         return super.compare(type, location);
@@ -81,8 +81,14 @@ public class IntType extends AbstractType {
 
     @Override
     public void assign(Type type, Locatable location) {
-        if (type != this) // Comparison by reference since we are using singletons
+        if (!this.isPromotableTo(type))
             super.assign(type, location);
+    }
+
+    @Override
+    public boolean isPromotableTo(Type type) {
+        return type instanceof IntType || type instanceof RealType;
+
     }
 
     @Override
@@ -102,7 +108,7 @@ public class IntType extends AbstractType {
 
     @Override
     public void ret(Type type, Locatable location) {
-        if (type != this) // Comparison by reference since we are using singletons
+        if (!this.isPromotableTo(type))
             super.ret(type, location);
     }
 

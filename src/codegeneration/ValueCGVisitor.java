@@ -15,6 +15,7 @@ import ast.expression.unary.Cast;
 import ast.expression.unary.FieldAccess;
 import ast.expression.unary.Negation;
 import ast.expression.unary.UnaryMinus;
+import ast.type.FunctionType;
 import ast.type.Type;
 import ast.type.builtin.IntType;
 import codegeneration.util.AbstractCGVisitor;
@@ -129,7 +130,13 @@ value[[FieldAccess: expression -> expression1 ID]] =
     <load> expression.type.suffix()
 
 value[[FuncInvocation: expression1 -> expression2 expression*]] =
-    expression*.forEach(exp -> value[[exp]])
+    for (int i = 0; i < expression2.type.params.size(); i++) {
+        Expression exp = expression*.get(i);
+        Type expectedType = expression2.type.params.get(i).type
+
+        value[[exp]]
+        exp.type.convertTo(expectedType)
+    }
     <call > expression2.name
 
  */
@@ -253,7 +260,14 @@ public class ValueCGVisitor extends AbstractCGVisitor<Void, Void> {
 
     @Override
     public Void visit(FuncInvocation invocation, Void param) {
-        invocation.getArgs().forEach(arg -> arg.accept(this, null));
+        FunctionType fnType = (FunctionType) invocation.getFn().getType();
+        for (int i = 0; i < fnType.getParams().size(); i++) {
+            Expression arg = invocation.getArgs().get(i);
+            Type expectedType = fnType.getParams().get(i).getType();
+
+            arg.accept(this, null);
+            arg.getType().convertTo(expectedType, this.cg);
+        }
         this.cg.call(invocation.getFn().getName());
         return null;
     }

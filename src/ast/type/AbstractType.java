@@ -81,6 +81,11 @@ public abstract class AbstractType implements Type {
     }
 
     @Override
+    public boolean isPromotableTo(Type type) {
+        return false;
+    }
+
+    @Override
     public void mustBeReadable(Locatable location) {
         new ErrorType(location, String.format("Cannot read to type '%s'", this.typeExpression()));
     }
@@ -114,4 +119,5 @@ public abstract class AbstractType implements Type {
     public String suffix() {
         throw new UnsupportedOperationException("suffix not implemented for type :" + this.typeExpression());
     }
+
 }
