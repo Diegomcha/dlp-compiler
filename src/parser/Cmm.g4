@@ -35,6 +35,10 @@ definitions returns [List<Definition> ast = new ArrayList<>()]:
              v=var_defs         { $ast.addAll($v.ast); }
            | f=fn_definition    { $ast.add($f.ast); }
            ;
+var_init returns [VarInitialization ast]:
+          l='let' id=ID '=' e=expression ';'
+          { $ast = new VarInitialization($l.getLine(), $l.getCharPositionInLine() + 1, $id.text, $e.ast); }
+        ;
 
 var_defs returns [List<VariableDefinition> ast = new ArrayList<>()]:
           t=type i1=ID           { $ast.add(new VariableDefinition($i1.getLine(), $i1.getCharPositionInLine() + 1, $i1.text, $t.ast)); }
@@ -57,8 +61,8 @@ fn_args returns [List<VariableDefinition> ast = new ArrayList<>()]:
        | // epsilon
        ;
 
-fn_body returns [List<VariableDefinition> defs = new ArrayList<>(), List<Statement> stmts = new ArrayList<>()]:
-         (v=var_defs { $defs.addAll($v.ast); })*
+fn_body returns [List<Definition> defs = new ArrayList<>(), List<Statement> stmts = new ArrayList<>()]:
+         (v=var_defs { $defs.addAll($v.ast); } | l=var_init { $defs.add($l.ast); })*
          (s=statements { $stmts.addAll($s.ast); })*
        ;
 

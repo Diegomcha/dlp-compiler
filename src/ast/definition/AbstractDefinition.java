@@ -6,10 +6,14 @@ import ast.type.Type;
 public abstract class AbstractDefinition<T extends Type> extends AbstractLocatable implements Definition {
 
     private final String name;
-    private final T type;
+    private T type;
     private int scope;
     private int offset;
 
+
+    protected AbstractDefinition(int line, int col, String name) {
+        this(line, col, name, null);
+    }
     protected AbstractDefinition(int line, int col, String name, T type) {
         super(line, col);
         this.name = name;
@@ -23,6 +27,10 @@ public abstract class AbstractDefinition<T extends Type> extends AbstractLocatab
 
     public final T getType() {
         return type;
+    }
+
+    public final void setType(T type) {
+        this.type = type;
     }
 
     @Override

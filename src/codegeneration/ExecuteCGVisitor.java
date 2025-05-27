@@ -3,6 +3,7 @@ package codegeneration;
 import ast.FuncInvocation;
 import ast.Program;
 import ast.definition.FunctionDefinition;
+import ast.definition.VarInitialization;
 import ast.definition.VariableDefinition;
 import ast.statement.Assignment;
 import ast.statement.conditional.Conditional;
@@ -20,6 +21,46 @@ import codegeneration.util.ExecuteParams;
 /*
 CODE TEMPLATES: execute
 
+execute[[Program: program -> definition*]] =
+    <' * Global variables>
+    definition*.filter(def -> def instanceof VariableDefinition).forEach(def -> execute[[def]])
+    <call main>
+    <halt>
+    definition*.filter(def -> def instanceof FunctionDefinition).forEach(def -> execute[[def]])
+
+// DEFINITIONS
+
+execute[[VariableDefinition: definition -> type ID]] =
+    <' * > definition.type.typeExpression() < > ID < (offset > definition.offset < )>
+
+
+execute[[FunctionDefinition: definition -> ID fnType vardefinition* statement*]] =
+    int localByteSum = vardefinition*.map(def -> def.type.numberOfBytes()).sum();
+    int paramByteSum = fnType.params.map(def -> def.type.numberOfBytes()).sum();
+
+    ID <:>
+    <' * Parameters>
+    fnType.params.forEach(def -> execute[[def]])
+    <' * Local variables>
+    <enter > localBytesSum
+    vardefinition*.forEach(def -> execute[[def]])
+    statement*.forEach(st -> execute[[st]](fnType.returnType, localByteSum, paramByteSum))
+    if (fnType.returnType == VoidType.getInstance())
+        <ret 0, > localByteSum <, > paramByteSum
+
+execute[[VarInitialization: definition -> ID expression]] =
+    <' * > definition.type.typeExpression() < > ID < (offset > definition.offset < ) [initialized]>
+    if (definition.scope != 0) {
+        <pusha bp>
+        <pushi > definition.offset
+        <addi>
+    } else
+        <pusha> definition.offset
+    value[[expression]]
+    <store> expression.type.suffix()
+
+// STATEMENTS
+
 execute[[Read: statement -> expression]] =
     address[[expression]]
     <in> expression.type.suffix
@@ -33,30 +74,6 @@ execute[[Assignment: statement -> expression1 expression2]] =
     address[[expression1]]
     value[[expression2]]
     <store> expression1.type.suffix()
-
-execute[[VariableDefinition: definition -> type ID]] =
-    <' * > definition.type.typeExpression() < > ID < (offset> definition.offset <)>
-
-execute[[FunctionDefinition: definition -> ID fnType vardefinition* statement*]] =
-    int localByteSum = vardefinition*.map(def -> def.type.numberOfBytes()).sum();
-    int paramByteSum = fnType.params.map(def -> def.type.numberOfBytes()).sum();
-
-    ID <:>
-    <' * Parameters>
-    fnType.params.forEach(def -> execute[[def]])
-    <' * Local variables>
-    vardefinition*.forEach(def -> execute[[def]])
-    <enter > localBytesSum
-    statement*.forEach(st -> execute[[st]](fnType.returnType, localByteSum, paramByteSum))
-    if (fnType.returnType == VoidType.getInstance())
-        <ret 0, > localByteSum <, > paramByteSum
-
-execute[[Program: program -> definition*]] =
-    <' * Global variables>
-    definition*.filter(def -> def instanceof VariableDefinition).forEach(def -> execute[[def]])
-    <call main>
-    <halt>
-    definition*.filter(def -> def instanceof FunctionDefinition).forEach(def -> execute[[def]])
 
 execute[[While: statement -> expression statement*]] =
     String condLabel = cg.nextLabel(),
@@ -139,6 +156,26 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<ExecuteParams, Void> {
     }
 
     @Override
+    public Void visit(VarInitialization varInit, ExecuteParams param) {
+        this.cg.comment(String.format("* %s %s (offset %d) [initialized]", varInit.getType().typeExpression(), varInit.getName(), varInit.getOffset()));
+
+        // Compute address
+        this.cg.pragmaLine(varInit.getLine());
+        if (varInit.getScope() != 0) {
+            this.cg.pushBP();
+            this.cg.push(varInit.getOffset());
+            this.cg.add();
+        } else
+            this.cg.pusha(varInit.getOffset());
+
+        // Load value
+        varInit.getExpr().accept(this.cg.valVisitor, null);
+        this.cg.store(varInit.getType());
+
+        return null;
+    }
+
+    @Override
     public Void visit(FunctionDefinition fnDef, ExecuteParams param) {
         int paramByteSum = fnDef.getType().getParams().stream()
                 .mapToInt(def -> def.getType().numberOfBytes())
@@ -154,8 +191,8 @@ public class ExecuteCGVisitor extends AbstractCGVisitor<ExecuteParams, Void> {
         this.cg.comment("* Parameters:");
         fnDef.getType().getParams().forEach(def -> def.accept(this, null));
         this.cg.comment("* Local variables:");
-        fnDef.getDefs().forEach(def -> def.accept(this, null));
         this.cg.enter(localByteSum);
+        fnDef.getDefs().forEach(def -> def.accept(this, null));
         this.cg.newLine();
 
         fnDef.getStmts().forEach(st -> {

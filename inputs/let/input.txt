@@ -1,0 +1,30 @@
+int[1] arr;
+struct {
+    char x;
+} str;
+
+void fn() {
+    let a = 'a';
+    let b = 2;
+    let c = 3.14;
+    let d = arr[0];
+    let e = str.x;
+    let f = c + 1.0;
+    let g = 1 + b;
+
+    write a, ' ';
+    write b, ' ';
+    write c, ' ';
+    write d, ' ';
+    write e, ' ';
+    write f, ' ';
+    write g, ' ';
+    write '\n';
+}
+
+void main() {
+    arr[0] = 4;
+    str.x = 'e';
+
+    fn();
+}

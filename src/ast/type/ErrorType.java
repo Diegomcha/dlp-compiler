@@ -126,4 +126,9 @@ public class ErrorType extends AbstractType implements Locatable {
     public void mustBeCondition(Locatable location) {
         // Avoid generating a new error
     }
+
+    @Override
+    public void mustBeAssignable(Locatable location) {
+        // Avoid generating a new error
+    }
 }

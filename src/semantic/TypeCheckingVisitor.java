@@ -1,6 +1,7 @@
 package semantic;
 
 import ast.FuncInvocation;
+import ast.definition.VarInitialization;
 import ast.definition.FunctionDefinition;
 import ast.expression.Expression;
 import ast.expression.Indexing;
@@ -161,6 +162,12 @@ P:
  FunctionDefinition: definition -> type ID vardef* statement*
 R:
  statement*.stream().forEach(s -> s.returnType = type.returnType);
+
+P:
+ VarInitialization: definition -> ID expression
+R:
+ expression.type.mustBeAssignable();
+ definition.type = expression.type;
 
 */
 
@@ -377,5 +384,17 @@ public class TypeCheckingVisitor extends AbstractTraversal<Type, Void> {
     public Void visit(FunctionDefinition fnDef, Type returnType) {
         // Passing returnType
         return super.visit(fnDef, fnDef.getType().getReturnType());
+    }
+
+    @Override
+    public Void visit(VarInitialization varInitialization, Type param) {
+        super.visit(varInitialization, param);
+
+        // Type must be assignable
+        varInitialization.getExpr().getType().mustBeAssignable(varInitialization);
+        // Type inference
+        varInitialization.setType(varInitialization.getExpr().getType());
+
+        return null;
     }
 }

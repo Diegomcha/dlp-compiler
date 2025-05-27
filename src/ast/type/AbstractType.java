@@ -96,6 +96,11 @@ public abstract class AbstractType implements Type {
     }
 
     @Override
+    public void mustBeAssignable(Locatable location) {
+        new ErrorType(location, String.format("Type '%s' cannot be assigned to a variable", this.typeExpression()));
+    }
+
+    @Override
     public int numberOfBytes() {
         throw new UnsupportedOperationException("numberOfBytes not implemented for type :" + this.typeExpression());
     }

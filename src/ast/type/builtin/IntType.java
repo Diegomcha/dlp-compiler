@@ -101,6 +101,11 @@ public class IntType extends AbstractType {
     }
 
     @Override
+    public void mustBeAssignable(Locatable location) {
+        // It's assignable
+    }
+
+    @Override
     public void ret(Type type, Locatable location) {
         if (type != this) // Comparison by reference since we are using singletons
             super.ret(type, location);

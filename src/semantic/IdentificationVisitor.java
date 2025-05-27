@@ -1,5 +1,6 @@
 package semantic;
 
+import ast.definition.VarInitialization;
 import ast.definition.Definition;
 import ast.definition.FunctionDefinition;
 import ast.definition.VariableDefinition;
@@ -17,6 +18,16 @@ public class IdentificationVisitor extends AbstractTraversal<Void, Void> {
 
         if (!symbolTable.insert(def))
             new ErrorType(def.getLine(), def.getCol(), "Variable '" + def.getName() + "' already defined");
+
+        return null;
+    }
+
+    @Override
+    public Void visit(VarInitialization varInit, Void param) {
+        super.visit(varInit, param);
+
+        if (!symbolTable.insert(varInit))
+            new ErrorType(varInit.getLine(), varInit.getCol(), "Variable '" + varInit.getName() + "' already defined");
 
         return null;
     }

@@ -19,6 +19,8 @@ public interface Visitor<TP, TR> {
 
     TR visit(FuncInvocation invocation, TP param);
 
+    TR visit(VarInitialization varInitialization, TP param);
+
     // TYPES
 
     TR visit(FunctionType fnType, TP param);
@@ -86,5 +88,4 @@ public interface Visitor<TP, TR> {
     TR visit(FunctionDefinition fnDef, TP param);
 
     TR visit(VariableDefinition varDef, TP param);
-
 }

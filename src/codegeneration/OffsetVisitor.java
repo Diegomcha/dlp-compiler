@@ -13,6 +13,12 @@ R:  if (definition.scope == 0) {
         globalBytesSum += type.numberOfBytes();
     }
 
+P:  VarInitialization: definition -> ID expression
+R:  if (definition.scope == 0) {
+        definition.offset = globalBytesSum;
+        globalBytesSum += expression.type.numberOfBytes();
+    }
+
 // RECORD FIELDS
 
 P:  StructType: type -> structField*
@@ -26,7 +32,7 @@ R:  int fieldsBytesSum = 0;
 
 P:  FunctionDefinition: definition -> type ID varDefinition* statement*
 R:  int localBytesSum = 0;
-    for (VariableDefinition var : varDefinition*) {
+    for (Definition var : varDefinition*) {
         localBytesSum += var.type.numberOfBytes();
         var.offset = -localBytesSum;
     }
@@ -35,7 +41,7 @@ R:  int localBytesSum = 0;
 
 P:  FunctionType: type -> type varDefinition*
 R:  int paramsOffsetSum = 4; // to skip control info
-    for (VariableDefinition var : varDefinition*.reversed()) { // right-to-left
+    for (Definition var : varDefinition*.reversed()) { // right-to-left
         var.offset = paramsOffsetSum;
         paramsOffsetSum += var.type.numberOfBytes();
     }
@@ -43,6 +49,8 @@ R:  int paramsOffsetSum = 4; // to skip control info
 
  */
 
+import ast.definition.VarInitialization;
+import ast.definition.Definition;
 import ast.definition.FunctionDefinition;
 import ast.definition.VariableDefinition;
 import ast.type.FunctionType;
@@ -67,6 +75,18 @@ public class OffsetVisitor extends AbstractTraversal<Void, Void> {
     }
 
     @Override
+    public Void visit(VarInitialization varInit, Void param) {
+        super.visit(varInit, param);
+
+        if (varInit.getScope() == 0) {
+            varInit.setOffset(globalBytesSum);
+            globalBytesSum += varInit.getType().numberOfBytes();
+        }
+
+        return null;
+    }
+
+    @Override
     public Void visit(StructType structType, Void param) {
         super.visit(structType, param);
 
@@ -84,7 +104,7 @@ public class OffsetVisitor extends AbstractTraversal<Void, Void> {
         super.visit(fnDef, param);
 
         int localBytesSum = 0;
-        for (VariableDefinition var : fnDef.getDefs()) {
+        for (Definition var : fnDef.getDefs()) {
             localBytesSum += var.getType().numberOfBytes();
             var.setOffset(-localBytesSum);
         }
@@ -97,7 +117,7 @@ public class OffsetVisitor extends AbstractTraversal<Void, Void> {
         super.visit(fnType, param);
 
         int paramsOffsetSum = 4; // to skip control info
-        for (VariableDefinition var : fnType.getParams().reversed()) { // right-to-left
+        for (Definition var : fnType.getParams().reversed()) { // right-to-left
             var.setOffset(paramsOffsetSum);
             paramsOffsetSum += var.getType().numberOfBytes();
         }
