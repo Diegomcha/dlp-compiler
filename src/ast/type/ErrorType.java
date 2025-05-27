@@ -93,6 +93,11 @@ public class ErrorType extends AbstractType implements Locatable {
     }
 
     @Override
+    public Type colon(Type type, Locatable location) {
+        return this;
+    }
+
+    @Override
     public Type exclamation(Locatable location) {
         return this;
     }

@@ -4,6 +4,7 @@ import ast.*;
 import ast.expression.*;
 import ast.expression.binary.*;
 import ast.expression.literal.*;
+import ast.expression.ternary.TernaryExpression;
 import ast.expression.unary.*;
 import ast.statement.*;
 import ast.statement.unary.*;
@@ -209,6 +210,14 @@ public abstract class AbstractTraversal<TP, TR> implements Visitor<TP, TR> {
     @Override
     public TR visit(VariableDefinition varDef, TP param) {
         varDef.getType().accept(this, param);
+        return null;
+    }
+
+    @Override
+    public TR visit(TernaryExpression ternaryExpression, TP param) {
+        ternaryExpression.getCondition().accept(this, param);
+        ternaryExpression.getTrueExpr().accept(this, param);
+        ternaryExpression.getFalseExpr().accept(this, param);
         return null;
     }
 }

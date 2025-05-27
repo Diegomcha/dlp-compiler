@@ -4,6 +4,7 @@ import ast.*;
 import ast.expression.*;
 import ast.expression.binary.*;
 import ast.expression.literal.*;
+import ast.expression.ternary.TernaryExpression;
 import ast.expression.unary.*;
 import ast.statement.*;
 import ast.statement.unary.*;
@@ -183,6 +184,11 @@ public abstract class AbstractCGVisitor<TP, TR> implements Visitor<TP, TR> {
 
     @Override
     public TR visit(VariableDefinition varDef, TP param) {
+        return this.defaultImpl();
+    }
+
+    @Override
+    public TR visit(TernaryExpression ternaryExpression, TP param) {
         return this.defaultImpl();
     }
 }

@@ -1,0 +1,22 @@
+void main() {
+    char a;
+    int b;
+    double c;
+    int d;
+
+    a = 1 ? 'a' : 'b';
+    b = (int)a ? 1 : 'a';
+    c = 1 ? 3.14 : 1;
+
+    d = 0
+        ? 'o'
+        : 0
+          ? 'o'
+          : 1;
+
+    write a, ' ';
+    write b, ' ';
+    write c, ' ';
+    write d, ' ';
+    write '\n';
+}

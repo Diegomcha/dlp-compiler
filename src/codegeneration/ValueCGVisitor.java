@@ -11,6 +11,7 @@ import ast.expression.binary.ReminderExpression;
 import ast.expression.literal.CharLiteral;
 import ast.expression.literal.IntLiteral;
 import ast.expression.literal.RealLiteral;
+import ast.expression.ternary.TernaryExpression;
 import ast.expression.unary.Cast;
 import ast.expression.unary.FieldAccess;
 import ast.expression.unary.Negation;
@@ -131,6 +132,21 @@ value[[FieldAccess: expression -> expression1 ID]] =
 value[[FuncInvocation: expression1 -> expression2 expression*]] =
     expression*.forEach(exp -> value[[exp]])
     <call > expression2.name
+
+value[[TernaryExpression: expression1 -> expression2 expression3 expression4]] =
+    String falseLabel = cg.nextLabel(),
+           exitLabel = cg.nextLabel();
+
+    value[[expression2]]
+    <jz > falseLabel
+    value[[expression3]]
+    expression3.type.convertTo(expression1.type)
+    <jmp > exitLabel
+    falseLabel <:>
+    value[[expression4]]
+    expression4.type.convertTo(expression1.type)
+    exitLabel <:>
+
 
  */
 
@@ -255,6 +271,37 @@ public class ValueCGVisitor extends AbstractCGVisitor<Void, Void> {
     public Void visit(FuncInvocation invocation, Void param) {
         invocation.getArgs().forEach(arg -> arg.accept(this, null));
         this.cg.call(invocation.getFn().getName());
+        return null;
+    }
+
+    @Override
+    public Void visit(TernaryExpression ternaryExpression, Void param) {
+        String falseLabel = this.cg.nextLabel();
+        String exitLabel = this.cg.nextLabel();
+
+        // Condition
+        ternaryExpression.getCondition().accept(this, null);
+        this.cg.jz(falseLabel);
+        this.cg.newLine();
+
+        // True branch
+        this.cg.incrementIndent();
+        ternaryExpression.getTrueExpr().accept(this, null);
+        ternaryExpression.getTrueExpr().getType().convertTo(ternaryExpression.getType(), this.cg);
+        this.cg.jmp(exitLabel);
+        this.cg.decrementIndent();
+        this.cg.newLine();
+
+        // False branch
+        this.cg.label(falseLabel);
+        this.cg.incrementIndent();
+        ternaryExpression.getFalseExpr().accept(this, null);
+        ternaryExpression.getFalseExpr().getType().convertTo(ternaryExpression.getType(), this.cg);
+
+        // Exit label
+        this.cg.decrementIndent();
+        this.cg.label(exitLabel);
+
         return null;
     }
 }

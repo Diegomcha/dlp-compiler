@@ -61,6 +61,11 @@ public abstract class AbstractType implements Type {
     }
 
     @Override
+    public Type colon(Type type, Locatable location) {
+        return new ErrorType(location, String.format("'%s' and '%s' are incompatible types", this.typeExpression(), type.typeExpression()));
+    }
+
+    @Override
     public Type exclamation(Locatable location) {
         return new ErrorType(location, String.format("Cannot negate type '%s'", this.typeExpression()));
     }
@@ -113,5 +118,10 @@ public abstract class AbstractType implements Type {
     @Override
     public String suffix() {
         throw new UnsupportedOperationException("suffix not implemented for type :" + this.typeExpression());
+    }
+
+    @Override
+    public boolean isCompatibleWith(Type type) {
+        return false;
     }
 }

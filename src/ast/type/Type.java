@@ -21,6 +21,8 @@ public interface Type extends ASTNode {
 
     Type cast(Type type, Locatable location);
 
+    Type colon (Type type, Locatable location);
+
     Type dot(String fieldName, Locatable location);
 
     Type exclamation(Locatable location);
@@ -46,4 +48,6 @@ public interface Type extends ASTNode {
     Type supertype(Type type);
 
     String suffix();
+
+    boolean isCompatibleWith(Type type);
 }

@@ -5,6 +5,7 @@ import ast.definition.*;
 import ast.expression.*;
 import ast.expression.binary.*;
 import ast.expression.literal.*;
+import ast.expression.ternary.TernaryExpression;
 import ast.expression.unary.*;
 import ast.statement.*;
 import ast.statement.conditional.*;
@@ -80,6 +81,8 @@ public interface Visitor<TP, TR> {
     TR visit(Negation negation, TP param);
 
     TR visit(UnaryMinus unaryMinus, TP param);
+
+    TR visit(TernaryExpression ternaryExpression, TP param);
 
     // DEFINITIONS
 

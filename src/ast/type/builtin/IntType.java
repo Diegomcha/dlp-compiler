@@ -2,6 +2,7 @@ package ast.type.builtin;
 
 import ast.node.Locatable;
 import ast.type.AbstractType;
+import ast.type.ErrorType;
 import ast.type.Type;
 import codegeneration.util.CodeGenerator;
 import semantic.Visitor;
@@ -70,6 +71,19 @@ public class IntType extends AbstractType {
     }
 
     @Override
+    public Type colon(Type type, Locatable location) {
+        // Propagate error types
+        if (type instanceof ErrorType)
+            return type;
+
+        // Check the types are compatible
+        if (!this.isCompatibleWith(type))
+            return super.colon(type, location);
+
+        return this.supertype(type);
+    }
+
+    @Override
     public Type minus(Locatable location) {
         return this;
     }
@@ -128,6 +142,11 @@ public class IntType extends AbstractType {
                 // error
                 super.convertTo(type, cg);
         }
+    }
+
+    @Override
+    public boolean isCompatibleWith(Type type) {
+        return type instanceof CharType || type instanceof IntType || type instanceof RealType;
     }
 
     @Override

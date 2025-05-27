@@ -12,6 +12,7 @@ import ast.expression.binary.ReminderExpression;
 import ast.expression.literal.CharLiteral;
 import ast.expression.literal.IntLiteral;
 import ast.expression.literal.RealLiteral;
+import ast.expression.ternary.TernaryExpression;
 import ast.expression.unary.Cast;
 import ast.expression.unary.FieldAccess;
 import ast.expression.unary.Negation;
@@ -108,6 +109,12 @@ P:
  UnaryMinus: expression1 -> expression2
 R:
  expression1.type = expression2.type.minus();
+
+P:
+ TernaryExpression: expression1 -> expression2 expression3 expression4
+R:
+ expression2.type.mustBeCondition();
+ expression1.type = expression3.type.colon(expression4.type);
 
 // STATEMENTS
 
@@ -377,5 +384,15 @@ public class TypeCheckingVisitor extends AbstractTraversal<Type, Void> {
     public Void visit(FunctionDefinition fnDef, Type returnType) {
         // Passing returnType
         return super.visit(fnDef, fnDef.getType().getReturnType());
+    }
+
+    @Override
+    public Void visit(TernaryExpression ternaryExpression, Type param) {
+        super.visit(ternaryExpression, param);
+
+        ternaryExpression.setLValue(false);
+        ternaryExpression.getCondition().getType().mustBeCondition(ternaryExpression);
+        ternaryExpression.setType(ternaryExpression.getTrueExpr().getType().colon(ternaryExpression.getFalseExpr().getType(), ternaryExpression));
+        return null;
     }
 }

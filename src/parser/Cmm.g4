@@ -5,6 +5,7 @@ grammar Cmm;
     import ast.definition.*;
     import ast.expression.*;
     import ast.expression.binary.*;
+    import ast.expression.ternary.*;
     import ast.expression.literal.*;
     import ast.expression.unary.*;
     import ast.statement.*;
@@ -118,16 +119,17 @@ expression returns [Expression ast]:
           | v=variable          { $ast = $v.ast; }
           | f=fn_invocation     { $ast = $f.ast; }
           // operands
-          | '(' expression ')'                                              { $ast = $expression.ast; }
-          | e1=expression s='[' e2=expression ']'                           { $ast = new Indexing($s.getLine(), $s.getCharPositionInLine() + 1, $e1.ast, $e2.ast); }
-          | e=expression p='.' ID                                           { $ast = new FieldAccess($p.getLine(), $p.getCharPositionInLine() + 1, $e.ast, $ID.text); }
-          | p='(' t=builtin_type ')' e=expression                           { $ast = new Cast($p.getLine(), $p.getCharPositionInLine() + 1, $e.ast, $t.ast); }
-          | m='-' e=expression                                              { $ast = new UnaryMinus($m.getLine(), $m.getCharPositionInLine() + 1, $e.ast); }
-          | n='!' e=expression                                              { $ast = new Negation($n.getLine(), $n.getCharPositionInLine() + 1, $e.ast); }
-          | e1=expression op=('*'|'/'|'%') e2=expression                    { $ast = ArithmeticFactory.create($op.getLine(), $op.getCharPositionInLine() + 1, $op.text, $e1.ast, $e2.ast); }
-          | e1=expression op=('+'|'-') e2=expression                        { $ast = ArithmeticFactory.create($op.getLine(), $op.getCharPositionInLine() + 1, $op.text, $e1.ast, $e2.ast); }
-          | e1=expression op=('>'|'>='|'<'|'<='|'!='|'==') e2=expression    { $ast = new ComparisonExpression($op.getLine(), $op.getCharPositionInLine() + 1, $op.text, $e1.ast, $e2.ast); }
-          | e1=expression op=('&&'|'||') e2=expression                      { $ast = new LogicalExpression($op.getLine(), $op.getCharPositionInLine() + 1, $op.text, $e1.ast, $e2.ast); }
+          | '(' expression ')'                                                  { $ast = $expression.ast; }
+          | e1=expression s='[' e2=expression ']'                               { $ast = new Indexing($s.getLine(), $s.getCharPositionInLine() + 1, $e1.ast, $e2.ast); }
+          | e=expression p='.' ID                                               { $ast = new FieldAccess($p.getLine(), $p.getCharPositionInLine() + 1, $e.ast, $ID.text); }
+          | p='(' t=builtin_type ')' e=expression                               { $ast = new Cast($p.getLine(), $p.getCharPositionInLine() + 1, $e.ast, $t.ast); }
+          | m='-' e=expression                                                  { $ast = new UnaryMinus($m.getLine(), $m.getCharPositionInLine() + 1, $e.ast); }
+          | n='!' e=expression                                                  { $ast = new Negation($n.getLine(), $n.getCharPositionInLine() + 1, $e.ast); }
+          | <assoc=right> c=expression q='?' e1=expression ':' e2=expression    { $ast = new TernaryExpression($q.getLine(), $q.getCharPositionInLine() + 1, $c.ast, $e1.ast, $e2.ast); }
+          | e1=expression op=('*'|'/'|'%') e2=expression                        { $ast = ArithmeticFactory.create($op.getLine(), $op.getCharPositionInLine() + 1, $op.text, $e1.ast, $e2.ast); }
+          | e1=expression op=('+'|'-') e2=expression                            { $ast = ArithmeticFactory.create($op.getLine(), $op.getCharPositionInLine() + 1, $op.text, $e1.ast, $e2.ast); }
+          | e1=expression op=('>'|'>='|'<'|'<='|'!='|'==') e2=expression        { $ast = new ComparisonExpression($op.getLine(), $op.getCharPositionInLine() + 1, $op.text, $e1.ast, $e2.ast); }
+          | e1=expression op=('&&'|'||') e2=expression                          { $ast = new LogicalExpression($op.getLine(), $op.getCharPositionInLine() + 1, $op.text, $e1.ast, $e2.ast); }
           ;
 
 fn_invocation returns [FuncInvocation ast]:
