@@ -53,4 +53,18 @@ public abstract class AbstractDefinition<T extends Type> extends AbstractLocatab
                 ", scope=" + scope +
                 ", offset=" + offset;
     }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof AbstractDefinition<?> that)) return false;
+
+        return name.equals(that.name) && type.equals(that.type);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + type.hashCode();
+        return result;
+    }
 }

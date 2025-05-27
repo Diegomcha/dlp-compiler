@@ -68,7 +68,25 @@ public class StructType extends AbstractType {
     }
 
     @Override
+    public void assign(Type type, Locatable location) {
+        if (!this.equals(type))
+            super.assign(type, location);
+    }
+
+    @Override
     public int numberOfBytes() {
         return fields.stream().mapToInt(f -> f.getType().numberOfBytes()).sum();
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof StructType that)) return false;
+
+        return fields.equals(that.fields);
+    }
+
+    @Override
+    public int hashCode() {
+        return fields.hashCode();
     }
 }
