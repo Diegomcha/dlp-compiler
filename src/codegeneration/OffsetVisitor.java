@@ -10,7 +10,7 @@ package codegeneration;
 P:  VariableDefinition: definition -> type ID
 R:  if (definition.scope == 0) {
         definition.offset = globalBytesSum;
-        globalBytesSum += definition.type.numberOfBytes();
+        globalBytesSum += type.numberOfBytes();
     }
 
 // RECORD FIELDS
