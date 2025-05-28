@@ -211,4 +211,10 @@ public abstract class AbstractTraversal<TP, TR> implements Visitor<TP, TR> {
         varDef.getType().accept(this, param);
         return null;
     }
+
+    @Override
+    public TR visit(UnaryArithmetic arithmeticUnary, TP param) {
+        arithmeticUnary.getExpr().accept(this, param);
+        return null;
+    }
 }

@@ -1,0 +1,46 @@
+int a;
+double b;
+int[1] arr;
+struct {
+    int d;
+} str;
+
+char e;
+
+void main() {
+    a = 0;
+    b = 0.0;
+    arr[0] = 0;
+    str.d = 0;
+    e = '4';
+
+    write a, '\n';      // 0
+    write a++, '\n';    // 0
+    write a--, '\n';    // 1
+    write ++a, '\n';    // 1
+    write --a, '\n';    // 0
+    write '\n';
+
+    write b, '\n';      // 0.0
+    write b++, '\n';    // 0.0
+    write b--, '\n';    // 1.0
+    write ++b, '\n';    // 1.0
+    write --b, '\n';    // 0.0
+    write '\n';
+
+    write arr[0], '\n';     // 0
+    write arr[0]++, '\n';   // 0
+    write arr[0]--, '\n';   // 1
+    write ++arr[0], '\n';   // 1
+    write --arr[0], '\n';   // 0
+    write '\n';
+
+    write str.d, '\n';      // 0
+    write str.d++, '\n';    // 0
+    write str.d--, '\n';    // 1
+    write ++str.d, '\n';    // 1
+    write --str.d, '\n';    // 0
+    write '\n';
+
+    //write e++, '\n';
+}

@@ -103,6 +103,11 @@ public class ErrorType extends AbstractType implements Locatable {
     }
 
     @Override
+    public Type increment(Locatable location) {
+        return this;
+    }
+
+    @Override
     public void assign(Type type, Locatable location) {
         // Avoid generating a new error
     }

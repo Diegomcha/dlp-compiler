@@ -71,6 +71,11 @@ public abstract class AbstractType implements Type {
     }
 
     @Override
+    public Type increment(Locatable location) {
+        return new ErrorType(location, String.format("Cannot increment/decrement type '%s'", this.typeExpression()));
+    }
+
+    @Override
     public void assign(Type type, Locatable location) {
         new ErrorType(location, String.format("Type '%s' cannot be assigned to type '%s'", type.typeExpression(), this.typeExpression()));
     }

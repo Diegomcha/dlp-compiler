@@ -185,4 +185,9 @@ public abstract class AbstractCGVisitor<TP, TR> implements Visitor<TP, TR> {
     public TR visit(VariableDefinition varDef, TP param) {
         return this.defaultImpl();
     }
+
+    @Override
+    public TR visit(UnaryArithmetic arithmeticUnary, TP param) {
+        return this.defaultImpl();
+    }
 }

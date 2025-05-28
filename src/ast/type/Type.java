@@ -31,6 +31,8 @@ public interface Type extends ASTNode {
 
     void ret(Type type, Locatable location);
 
+    Type increment(Locatable location);
+
     void mustBeReadable(Locatable location);
 
     void mustBeWritable(Locatable location);

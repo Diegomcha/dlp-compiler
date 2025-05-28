@@ -177,6 +177,14 @@ public class CodeGenerator implements AutoCloseable {
         this.writeLine("not");
     }
 
+    public void unaryArithmetic(String operator, Type type) {
+        this.writeLine(switch (operator) {
+            case "++" -> "add";
+            case "--" -> "sub";
+            default -> throw new UnsupportedOperationException("Unknown operator: " + operator);
+        } + type.suffix());
+    }
+
     public void arithmetic(String operator, Type type) {
         this.writeLine(switch (operator) {
             case "+" -> "add";

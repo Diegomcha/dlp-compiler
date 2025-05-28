@@ -6,6 +6,7 @@ import ast.expression.*;
 import ast.expression.binary.*;
 import ast.expression.literal.*;
 import ast.expression.unary.*;
+import ast.expression.unary.UnaryArithmetic;
 import ast.statement.*;
 import ast.statement.conditional.*;
 import ast.statement.unary.*;
@@ -60,6 +61,8 @@ public interface Visitor<TP, TR> {
     TR visit(Indexing idx, TP param);
 
     TR visit(ArithmeticExpression arithmetic, TP param);
+
+    TR visit(UnaryArithmetic arithmeticUnary, TP param);
 
     TR visit(ComparisonExpression comparison, TP param);
 

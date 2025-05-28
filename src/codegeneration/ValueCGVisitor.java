@@ -11,10 +11,7 @@ import ast.expression.binary.ReminderExpression;
 import ast.expression.literal.CharLiteral;
 import ast.expression.literal.IntLiteral;
 import ast.expression.literal.RealLiteral;
-import ast.expression.unary.Cast;
-import ast.expression.unary.FieldAccess;
-import ast.expression.unary.Negation;
-import ast.expression.unary.UnaryMinus;
+import ast.expression.unary.*;
 import ast.type.Type;
 import ast.type.builtin.IntType;
 import codegeneration.util.AbstractCGVisitor;
@@ -131,6 +128,24 @@ value[[FieldAccess: expression -> expression1 ID]] =
 value[[FuncInvocation: expression1 -> expression2 expression*]] =
     expression*.forEach(exp -> value[[exp]])
     <call > expression2.name
+
+// This is not efficient
+value[[UnaryArithmetic: expression1 -> expression2 OP PF]] =
+    if (PF) value[[expression2]]
+    address[[expression2]]
+    value[[expression2]]
+    <pushi 1>
+    IntType.getInstance().convertTo(expression2.type)
+    switch (OP) {
+        case "++":
+            <add> expression2.type.suffix()
+            break;
+        case "--":
+            <sub> expression2.type.suffix()
+            break;
+    }
+    <store> expression2.type.suffix()
+    if (!PF) value[[expression2]]
 
  */
 
@@ -255,6 +270,24 @@ public class ValueCGVisitor extends AbstractCGVisitor<Void, Void> {
     public Void visit(FuncInvocation invocation, Void param) {
         invocation.getArgs().forEach(arg -> arg.accept(this, null));
         this.cg.call(invocation.getFn().getName());
+        return null;
+    }
+
+    @Override
+    public Void visit(UnaryArithmetic arithmeticUnary, Void param) {
+        if (arithmeticUnary.isPostfix())
+            arithmeticUnary.getExpr().accept(this, null);
+
+        arithmeticUnary.getExpr().accept(this.cg.addrVisitor, null);
+        arithmeticUnary.getExpr().accept(this, null);
+        this.cg.push(1);
+        IntType.getInstance().convertTo(arithmeticUnary.getType(), this.cg);
+        this.cg.unaryArithmetic(arithmeticUnary.getOperator(), arithmeticUnary.getType());
+        this.cg.store(arithmeticUnary.getType());
+
+        if (!arithmeticUnary.isPostfix())
+            arithmeticUnary.getExpr().accept(this, null);
+
         return null;
     }
 }

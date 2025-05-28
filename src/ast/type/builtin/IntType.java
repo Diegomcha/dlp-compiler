@@ -86,6 +86,11 @@ public class IntType extends AbstractType {
     }
 
     @Override
+    public Type increment(Locatable location) {
+        return this;
+    }
+
+    @Override
     public void mustBeReadable(Locatable location) {
         // It's readable
     }

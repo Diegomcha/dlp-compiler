@@ -12,10 +12,7 @@ import ast.expression.binary.ReminderExpression;
 import ast.expression.literal.CharLiteral;
 import ast.expression.literal.IntLiteral;
 import ast.expression.literal.RealLiteral;
-import ast.expression.unary.Cast;
-import ast.expression.unary.FieldAccess;
-import ast.expression.unary.Negation;
-import ast.expression.unary.UnaryMinus;
+import ast.expression.unary.*;
 import ast.statement.Assignment;
 import ast.statement.conditional.Conditional;
 import ast.statement.conditional.While;
@@ -58,6 +55,11 @@ P:
  ArithmeticExpression: expression1 -> expression2 expression3
 R:
  expression1.type = expression2.type.arithmetic(expression3.type);
+
+P:
+ UnaryArithmetic: expression1 -> expression2 OP PF
+R:
+ expression1.type = expression2.type.increment();
 
 P:
  ComparisonExpression: expression1 -> expression2 OP expression3
@@ -230,6 +232,20 @@ public class TypeCheckingVisitor extends AbstractTraversal<Type, Void> {
 
         arithmetic.setLValue(false);
         arithmetic.setType(arithmetic.getOp1().getType().arithmetic(arithmetic.getOp2().getType(), arithmetic));
+
+        return null;
+    }
+
+    @Override
+    public Void visit(UnaryArithmetic arithmeticUnary, Type param) {
+        super.visit(arithmeticUnary, param);
+
+        // L-value expected error
+        if (!arithmeticUnary.getExpr().getLValue())
+            new ErrorType(arithmeticUnary.getExpr().getLine(), arithmeticUnary.getExpr().getCol(), "L-value expected");
+        arithmeticUnary.setLValue(false);
+
+        arithmeticUnary.setType(arithmeticUnary.getExpr().getType().increment(arithmeticUnary));
 
         return null;
     }

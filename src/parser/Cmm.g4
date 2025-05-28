@@ -124,6 +124,8 @@ expression returns [Expression ast]:
           | p='(' t=builtin_type ')' e=expression                           { $ast = new Cast($p.getLine(), $p.getCharPositionInLine() + 1, $e.ast, $t.ast); }
           | m='-' e=expression                                              { $ast = new UnaryMinus($m.getLine(), $m.getCharPositionInLine() + 1, $e.ast); }
           | n='!' e=expression                                              { $ast = new Negation($n.getLine(), $n.getCharPositionInLine() + 1, $e.ast); }
+          | op=('++'|'--') e=expression                                     { $ast = new UnaryArithmetic($op.getLine(), $op.getCharPositionInLine() + 1, $e.ast, $op.text, false); }
+          | e=expression op=('++'|'--')                                     { $ast = new UnaryArithmetic($op.getLine(), $op.getCharPositionInLine() + 1, $e.ast, $op.text, true); }
           | e1=expression op=('*'|'/'|'%') e2=expression                    { $ast = ArithmeticFactory.create($op.getLine(), $op.getCharPositionInLine() + 1, $op.text, $e1.ast, $e2.ast); }
           | e1=expression op=('+'|'-') e2=expression                        { $ast = ArithmeticFactory.create($op.getLine(), $op.getCharPositionInLine() + 1, $op.text, $e1.ast, $e2.ast); }
           | e1=expression op=('>'|'>='|'<'|'<='|'!='|'==') e2=expression    { $ast = new ComparisonExpression($op.getLine(), $op.getCharPositionInLine() + 1, $op.text, $e1.ast, $e2.ast); }
