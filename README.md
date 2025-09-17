@@ -1,6 +1,6 @@
-# Práctica de implementación de un compilador sencillo
+# Simple compiler practice implementation
 
-- **Asignatura:** Diseño de Lenguajes de Programación (GIISOF01-3-009)  
-- **Grado:** Ingeniería Informática del Software (Universidad de Oviedo)
+- **Course:** Programming Language Design (GIISOF01-3-009)  
+- **Degree:** Software Computer Engineering (University of Oviedo)
 
-Este repositorio contiene la **implementación del compilador** utilizado durante las prácticas de la asignatura.
+This repository contains the **implementation of the compiler** developed during the practical exercises of the course.
